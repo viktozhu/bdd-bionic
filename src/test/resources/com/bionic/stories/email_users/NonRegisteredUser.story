@@ -1,11 +1,16 @@
 Meta:
+@TIS-45
 
 Narrative:
-As a user
-I want to perform an action
-So that I can achieve a business goal
+In order to attract new users
+System should email non registered users to sign-up with Teams in Space
 
-Scenario: scenario description
-Given a system state
-When I do something
-Then system is in a different state
+Scenario: System email non registred user after his visit
+Given non registered user visited system
+When Team goes into Space
+Then system sends sign-up email to this user
+
+Examples:
+|userName|userEmail|
+|vasia|vasia@gmail.com|
+|chuck norris|gmail@chuck norris|
