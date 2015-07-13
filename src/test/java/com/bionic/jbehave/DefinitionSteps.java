@@ -1,10 +1,7 @@
 package com.bionic.jbehave;
 
 import net.thucydides.core.annotations.Steps;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Named;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
+import org.jbehave.core.annotations.*;
 
 import com.bionic.steps.EndUserSteps;
 import org.jbehave.core.model.ExamplesTable;
@@ -12,6 +9,11 @@ import org.jbehave.core.model.ExamplesTable;
 import java.util.Map;
 
 public class DefinitionSteps {
+
+    @BeforeStories
+    public void doitMany(){
+        System.out.println("Wou! They fix it!");
+    }
 
     @Steps
     EndUserSteps endUser;
