@@ -13,6 +13,7 @@ import org.jbehave.core.annotations.When;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
 
 /**
@@ -25,7 +26,13 @@ public class GmailDefinitions {
     @Given("authorized connection to gmail")
     public void authorizedConnection() throws IOException {
         PropertyLoader.loadPropertys();
-        Gmail service = GmailAuthorization.getGmailService();
+        GmailAuthorization gmailAuthorization = null;
+        try {
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        Gmail service = gmailAuthorization.getGmailService();
 
         String user = "me";
         ListLabelsResponse listResponse =
