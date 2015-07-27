@@ -1,11 +1,15 @@
-package com.bionic.jbehave;
+package com.bionic.jbehave.gmail;
 
 import com.bionic.google.GmailAuthorization;
+import com.bionic.steps.GmailSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.ListLabelsResponse;
+import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Given;
+import org.jbehave.core.annotations.Then;
+import org.jbehave.core.annotations.When;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -14,7 +18,9 @@ import java.util.List;
 /**
  * Created by viktozhu on 7/23/15.
  */
-public class GoogleDefinitions {
+public class GmailDefinitions {
+    @Steps
+    GmailSteps steps;
 
     @Given("authorized connection to gmail")
     public void authorizedConnection() throws IOException {
@@ -33,5 +39,15 @@ public class GoogleDefinitions {
                 System.out.printf("- %s\n", label.getName());
             }
         }
+    }
+
+    @When("user I get list of emails")
+    public void getEmailList(){
+
+    }
+
+    @Then("no new emails recevied")
+    public void shouldNotBeNewEmails(){
+
     }
 }
