@@ -50,4 +50,26 @@ public class GmailDefinitions {
     public void shouldNotBeNewEmails(){
 
     }
+
+    @Given("an email was sent from first google account")
+    public void givenAnEmailWasSentFromFirstGoogleAccount() {
+        // PENDING
+    }
+
+    @When("the second account sends autoreply email in response")
+    public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
+        // PENDING
+    }
+
+    @Then("the first account get autoreply email")
+    public void thenTheFirstAccountGetAutoreplyEmail() {
+        // PENDING
+    }
+
+    @Then("doesn't send autoreply email in response")
+    public void thenDoesntSendAutoreplyEmailInResponse() {
+        // PENDING
+    }
+
+
 }
