@@ -16,12 +16,15 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
 import jline.internal.TestAccessible;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.bionic.utils.PropertyLoader.getProperty;
 
 /**
  * Created by viktozhu on 7/23/15.
@@ -48,7 +51,7 @@ public class GmailAuthorization {
 
     public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
         this.applicationName = applicationName;
-        this.dataStoreDir = new java.io.File(PropertyLoader.getProperty("project.path"), "src/main/resources/credentials/gmail-api"+applicationName);
+        this.dataStoreDir = new java.io.File(getProperty("project.path"), "src/main/resources/credentials/gmail-api"+applicationName);
         this.dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
         this.pathToClientSecret = pathToClientSecret;
         httpTransport = GoogleNetHttpTransport.newTrustedTransport();
@@ -60,7 +63,7 @@ public class GmailAuthorization {
      * @throws IOException
      */
     public  Credential authorize() throws IOException {
-        InputStream in =  GmailAuthorization.class.getResourceAsStream(pathToClientSecret);
+        InputStream in =  new FileInputStream(pathToClientSecret);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
