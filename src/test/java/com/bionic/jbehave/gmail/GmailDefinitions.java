@@ -12,9 +12,13 @@ import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.junit.Test;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by viktozhu on 7/23/15.
@@ -22,6 +26,9 @@ import java.util.List;
 public class GmailDefinitions {
     @Steps
     GmailSteps steps;
+
+    String firstAccount;
+    String secondAccount;
 
     @Given("authorized connection to gmail")
     public void authorizedConnection() throws IOException {
@@ -80,23 +87,23 @@ public class GmailDefinitions {
     }
 
     @Given("an email was sent from first google account")
-    public void givenAnEmailWasSentFromFirstGoogleAccount() {
-        // PENDING
+    public void givenAnEmailWasSentFromFirstGoogleAccount() throws GeneralSecurityException, MessagingException, IOException {
+        steps.sendEmail(firstAccount, secondAccount);
     }
 
     @When("the second account sends autoreply email in response")
     public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
-        // PENDING
+        steps.executeAutoResponder(secondAccount);
     }
 
-    @Then("the first account get autoreply email")
+    @Then("the first account gets autoreply email")
     public void thenTheFirstAccountGetAutoreplyEmail() {
-        // PENDING
+        assertTrue(steps.isAutoReplyReceived(firstAccount));
     }
 
     @Then("doesn't send autoreply email in response")
     public void thenDoesntSendAutoreplyEmailInResponse() {
-        // PENDING
+        assertFalse(steps.isAutoReplyReceived(secondAccount));
     }
 
 

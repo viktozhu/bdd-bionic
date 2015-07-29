@@ -9,5 +9,5 @@ So that I can manage my emails properly and in short time
 Scenario: Verify that autoreply email is not sent in response to autoreply email
 Given an email was sent from first google account
 When the second account sends autoreply email in response
-Then the first account get autoreply email
+Then the first account gets autoreply email
 And doesn't send autoreply email in response
