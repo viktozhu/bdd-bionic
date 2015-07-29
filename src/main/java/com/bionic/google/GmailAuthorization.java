@@ -14,39 +14,47 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.GmailScopes;
-import com.google.api.services.gmail.model.Label;
-import com.google.api.services.gmail.model.ListLabelsResponse;
+import jline.internal.TestAccessible;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.List;
+
+import static com.bionic.utils.PropertyLoader.getProperty;
 
 /**
  * Created by viktozhu on 7/23/15.
  */
 public class GmailAuthorization {
-    private static final String APPLICATION_NAME = "Gmail API Java Quickstart";
 
-    private static final java.io.File DATA_STORE_DIR = new java.io.File(PropertyLoader.getProperty("project.path"), "src/main/resources/credentials/gmail-api");
-
-    private static FileDataStoreFactory DATA_STORE_FACTORY;
-
+    private String applicationName;
+    private java.io.File dataStoreDir;
+    private FileDataStoreFactory dataStoreFactory;
+    private String pathToClientSecret;
+    private HttpTransport httpTransport;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-
-    private static HttpTransport HTTP_TRANSPORT;
-
-    private static final List<String> SCOPES = Arrays.asList(GmailScopes.GMAIL_LABELS);
+    private static final List<String> SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
 
     static {
         try {
-            HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            DATA_STORE_FACTORY = new FileDataStoreFactory(DATA_STORE_DIR);
+
         } catch (Throwable t) {
             t.printStackTrace();
             System.exit(1);
         }
+    }
+
+
+    public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
+        this.applicationName = applicationName;
+        this.dataStoreDir = new java.io.File(getProperty("project.path"), "src/main/resources/credentials/gmail-api"+applicationName);
+        this.dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
+        this.pathToClientSecret = pathToClientSecret;
+        httpTransport = GoogleNetHttpTransport.newTrustedTransport();
     }
 
     /**
@@ -54,19 +62,19 @@ public class GmailAuthorization {
      * @return an authorized Credential object.
      * @throws IOException
      */
-    public static Credential authorize() throws IOException {
-        InputStream in =  GmailAuthorization.class.getResourceAsStream("/credentials/client_secret.json");
+    public  Credential authorize() throws IOException {
+        InputStream in =  new FileInputStream(pathToClientSecret);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow =
                 new GoogleAuthorizationCodeFlow.Builder(
-                        HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                        .setDataStoreFactory(DATA_STORE_FACTORY)
+                        httpTransport, JSON_FACTORY, clientSecrets, SCOPES)
+                        .setDataStoreFactory(dataStoreFactory)
                         .setAccessType("offline")
                         .build();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize(clientSecrets.getInstalled().getClientId());
-        System.out.println("Credentials saved to " + DATA_STORE_DIR.getAbsolutePath());
+        System.out.println("Credentials saved to " + dataStoreDir.getAbsolutePath());
         return credential;
     }
 
@@ -75,10 +83,11 @@ public class GmailAuthorization {
      * @return an authorized Gmail client service
      * @throws IOException
      */
-    public static Gmail getGmailService() throws IOException {
+
+    public Gmail getGmailService() throws IOException {
         Credential credential = authorize();
-        return new Gmail.Builder(HTTP_TRANSPORT, JSON_FACTORY, credential)
-                .setApplicationName(APPLICATION_NAME)
+        return new Gmail.Builder(httpTransport, JSON_FACTORY, credential)
+                .setApplicationName(applicationName)
                 .build();
     }
 
