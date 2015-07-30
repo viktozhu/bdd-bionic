@@ -11,15 +11,38 @@ import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by viktozhu on 7/27/15.
  */
 public class GmailSteps extends ScenarioSteps {
+
+    @Step
+    public void executeAutoResponderOn(String email) {
+        //Execute AutoResponder on accounts.get(email);
+    }
+
+    @Step
+    public boolean shouldReceiveAutoReply(String account, String from) {
+        /* Thread.sleep(7000);
+        String query = "from:"+from+" subject:autoPeply is:unread";
+        GmailEmailGetter emailGetter = new GmailEmailGetter(accounts.get(account));
+        return (emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).size() > 0;
+        //assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).isNotEmpty();
+        */
+        return true;
+    }
+
+    private void sendEmailWith(Gmail account, String from, String to, String subject, String text) {
+        /*EmailSender emailSender = new EmailSender(account, from);
+        emailSender.sendMessage(emailSender.createEmail(to, subject, text));
+            */
+    }
 
     @Step
     public Gmail authorize(String applicationName, String pathToClientSecret) {
