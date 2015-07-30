@@ -47,7 +47,7 @@ public class GmailEmailGetter {
      * @param query   String used to filter the Messages listed.
      * @throws IOException
      */
-    private List<Message> listMessagesMatchingQuery(Gmail service, String userId,
+    public List<Message> listMessagesMatchingQuery(Gmail service, String userId,
                                                     String query) throws IOException {
         ListMessagesResponse response = service.users().messages().list(userId).setQ(query).execute();
 
