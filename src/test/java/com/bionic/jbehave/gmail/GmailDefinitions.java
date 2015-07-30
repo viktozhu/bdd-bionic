@@ -1,20 +1,18 @@
 package com.bionic.jbehave.gmail;
 
-import com.bionic.google.GmailAuthorization;
 import com.bionic.steps.GmailSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Label;
-import com.google.api.services.gmail.model.ListLabelsResponse;
+import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Steps;
+import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-import org.junit.Test;
+import org.junit.Assert;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.List;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by viktozhu on 7/23/15.
@@ -23,29 +21,17 @@ public class GmailDefinitions {
     @Steps
     GmailSteps steps;
 
-    @Given("authorized connection to gmail")
-    public void authorizedConnection() throws IOException {
-        PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Gmail service = gmailAuthorization.getGmailService();
+    private static final String account1 = "bionic.bdd@gmail.com";
+    private static final String account2 = "bionic.bdd.test@gmail.com";
 
-        String user = "me";
-        ListLabelsResponse listResponse =
-                service.users().labels().list(user).execute();
-        List<Label> labels = listResponse.getLabels();
-        if (labels.size() == 0) {
-            System.out.println("No labels found.");
-        } else {
-            System.out.println("Labels:");
-            for (Label label : labels) {
-                System.out.printf("- %s\n", label.getName());
-            }
-        }
+    @Given("authorized connection to gmail as '$user' user")
+    public void authorizedConnection(String guser) {
+        Gmail service = null;
+        if (guser.equals("bionic.bdd"))
+            service = steps.authorize(PropertyLoader.getProperty("secret.path.bionic.bdd"), PropertyLoader.getProperty("project.bionic.bdd"));
+
+        Assert.assertNotNull("Authoprization failed", service);
+        Serenity.getCurrentSession().put("service", service);
     }
 
     @When("user I get list of emails")
@@ -57,4 +43,46 @@ public class GmailDefinitions {
     public void shouldNotBeNewEmails(){
 
     }
+
+    @When("user receives a new email")
+    public void whenUserReceivesANewEmail(String to, String content) {
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        steps.sendEmail(service,to,content);
+    }
+
+    @Given("Auto-Responder application is running")
+    public void whenAutoResponderIsExecuted() {
+        steps.executeAutoResponderOn(account2);
+    }
+
+    @Then("Auto-Responder sends auto-reply for this email")
+    public void thenAutoResponderSendsAutoreplyEmailForThisEmail() {
+        assertTrue(steps.shouldReceiveAutoReply(account1, account2));
+    }
+
+    @Then("doesn't send autoreply email in response")
+    public void thenDoesntSendAutoreplyEmailInResponse() {
+        steps.executeAutoResponderOn(account1);
+        assertFalse(steps.shouldReceiveAutoReply(account2, account1));
+    }
+
+    @Given("an email was sent by logged in user to '$emailTo', with content '$content'")
+    public void givenAnEmailWasSentFromFirstGoogleAccount(String emailTo, String content) {
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        steps.sendEmail(service, emailTo, content);
+    }
+
+    @When("the second account sends autoreply email in response")
+    public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        steps.executeAutoResponder(service, "to");
+    }
+
+    @Then("the first account gets autoreply email")
+    public void thenTheFirstAccountGetAutoreplyEmail() {
+
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        assertTrue(steps.isAutoReplyReceived(service, "from"));
+    }
+
 }
