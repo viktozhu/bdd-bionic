@@ -4,11 +4,6 @@ import java.io.*;
 
 public class FileHelper {
 
-<<<<<<< HEAD
-    public static String getFileHashSum(String filename){
-        //TODO
-        return "";
-=======
     public static String getFileHashSum(String pathToFile) {
         FileInputStream fileInputStream = null;
         String md5 = "";
@@ -20,6 +15,5 @@ public class FileHelper {
             e.printStackTrace();
         }
         return md5;
->>>>>>> c9fd182b3b3c3484e25d45d0399176583a6a01ee
     }
 }
