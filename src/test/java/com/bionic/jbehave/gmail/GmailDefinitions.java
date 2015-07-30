@@ -7,10 +7,7 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Label;
 import com.google.api.services.gmail.model.ListLabelsResponse;
 import net.thucydides.core.annotations.Steps;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
-import org.junit.Test;
+import org.jbehave.core.annotations.*;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -23,12 +20,17 @@ public class GmailDefinitions {
     @Steps
     GmailSteps steps;
 
+    @BeforeStories
+    public void init() {
+        PropertyLoader.loadPropertys();
+    }
+
     @Given("authorized connection to gmail")
     public void authorizedConnection() throws IOException {
         PropertyLoader.loadPropertys();
         GmailAuthorization gmailAuthorization = null;
         try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
+            gmailAuthorization = new GmailAuthorization("bdd-project2", "src/main/resources/secrets/bionic.bdd.test.secret.json");
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
         }
@@ -61,42 +63,35 @@ public class GmailDefinitions {
 
     @Given("google account user")
     public void givenGoogleAccountUser() {
-        // PENDING
+        steps.authorizeInit();
     }
 
     @When("user receives a new email")
     public void whenUserReceivesANewEmail() {
-        // PENDING
+        steps.userSendsEmail("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com", "message4Test", "Some text...");
     }
 
-    @When("autoResponder is executed")
+    @When("Auto-Responder is executed")
+    @Alias("the second account sends autoreply email in response")
     public void whenAutoResponderIsExecuted() {
-        // PENDING
+        steps.executeAutoResponderOn("bionic.bdd.test@gmail.com");
     }
 
-    @Then("autoResponder sends auto-reply email for this email")
+    @Then("Auto-Responder sends auto-reply for this email")
+    @Alias("the first account get autoreply email")
     public void thenAutoResponderSendsAutoreplyEmailForThisEmail() {
-        // PENDING
+        steps.shouldReceiveAutoReply("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com");
     }
 
     @Given("an email was sent from first google account")
     public void givenAnEmailWasSentFromFirstGoogleAccount() {
-        // PENDING
-    }
-
-    @When("the second account sends autoreply email in response")
-    public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
-        // PENDING
-    }
-
-    @Then("the first account get autoreply email")
-    public void thenTheFirstAccountGetAutoreplyEmail() {
-        // PENDING
+        steps.userSendsEmail("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com", "message4Test", "Some text...");
     }
 
     @Then("doesn't send autoreply email in response")
     public void thenDoesntSendAutoreplyEmailInResponse() {
-        // PENDING
+        steps.executeAutoResponderOn("bionic.bdd@gmail.com");
+
     }
 
 

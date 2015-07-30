@@ -1,6 +1,7 @@
 Meta:
 @issue BDD-2
 
+
 Narrative:
 As a google account user
 I want to make sure that autoreply email is not sent in response to autoreply email
