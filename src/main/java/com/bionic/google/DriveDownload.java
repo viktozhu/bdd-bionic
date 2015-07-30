@@ -3,22 +3,27 @@ package com.bionic.google;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
-/**
- * Created by bdd on 7/30/15.
- */
 public class DriveDownload {
+    private Drive service;
+    private File file;
+
+    public DriveDownload(Drive service, File file) {
+        this.service = service;
+        this.file = file;
+    }
+
     /**
      * Download a file's content.
      *
-     * @param service Drive API service instance.
-     * @param file Drive File instance.
      * @return InputStream containing the file's content if successful,
-     *         {@code null} otherwise.
+     * {@code null} otherwise.
      */
-    public static InputStream downloadFile(Drive service, File file) {
+    private InputStream downloadFile() {
         if (file.getDownloadUrl() != null && file.getDownloadUrl().length() > 0) {
             try {
                 // uses alt=media query parameter to request content
@@ -34,8 +39,47 @@ public class DriveDownload {
         }
     }
 
-    public void saveFileToHDD(InputStream file){
-        //TODO
+    public void saveFileToHDD(String pathToSave) {
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+
+        try {
+            // read this file into InputStream
+            inputStream = downloadFile();
+
+            // write the inputStream to a FileOutputStream
+            outputStream =
+                    new FileOutputStream(new java.io.File(pathToSave));
+
+            int read = 0;
+            byte[] bytes = new byte[1024];
+
+            while ((read = inputStream.read(bytes)) != -1) {
+                outputStream.write(bytes, 0, read);
+            }
+
+            System.out.println("Done!");
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (inputStream != null) {
+                try {
+                    inputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (outputStream != null) {
+                try {
+                    // outputStream.flush();
+                    outputStream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
     }
 
 }
