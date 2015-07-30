@@ -3,6 +3,7 @@ package com.bionic.google;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import java.io.*;
 import java.util.Properties;
@@ -25,9 +26,9 @@ public class EmailSender {
     private String userMailbox;
     private Gmail service;
 
-    public EmailSender(Gmail service, String userMailbox) {
+    public EmailSender(Gmail service) {
         this.service = service;
-        this.userMailbox = userMailbox;
+        this.userMailbox = "me";
     }
 
     /**
@@ -150,8 +151,28 @@ public class EmailSender {
             throws MessagingException, IOException {
         Message message = createMessageWithEmail(email);
         message = service.users().messages().send(userMailbox, message).execute();
-       // System.out.println("Message id: " + message.getId());
-       //System.out.println(message.toPrettyString());
+        // System.out.println("Message id: " + message.getId());
+        //System.out.println(message.toPrettyString());
+    }
+
+
+    public void sendMessage(String emailTo, Gson json) throws MessagingException, IOException {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+
+        MimeMessage email = new MimeMessage(session);
+
+        email.setFrom(new InternetAddress(userMailbox));
+        email.addRecipient(javax.mail.Message.RecipientType.TO,
+                new InternetAddress(emailTo));
+        EmailContent emailContainerContent = new GsonBuilder().create().fromJson(json.toString(), EmailContent.class);
+        String bodyText = emailContainerContent.getHeader() + ",\n"
+                + emailContainerContent.getBody() + "\n"
+                + emailContainerContent.getFooter();
+        email.setSubject("FIXME"); //FIXME: get from JSON
+        email.setText(bodyText);
+
+        sendMessage(email);
     }
 
     /**

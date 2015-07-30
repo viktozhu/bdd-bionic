@@ -1,21 +1,18 @@
 package com.bionic.jbehave.gmail;
 
-import com.bionic.google.GmailAuthorization;
 import com.bionic.steps.GmailSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Label;
-import com.google.api.services.gmail.model.ListLabelsResponse;
+import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-import org.junit.Test;
+import org.junit.Assert;
 
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
 import static junit.framework.Assert.assertFalse;
 import static junit.framework.Assert.assertTrue;
@@ -27,32 +24,14 @@ public class GmailDefinitions {
     @Steps
     GmailSteps steps;
 
-    String firstAccount;
-    String secondAccount;
+    @Given("authorized connection to gmail as '$user' user")
+    public void authorizedConnection(String guser) {
+        Gmail service = null;
+        if (guser.equals("bionic.bdd"))
+            service = steps.authorize(PropertyLoader.getProperty("secret.path.bionic.bdd"), PropertyLoader.getProperty("project.bionic.bdd"));
 
-    @Given("authorized connection to gmail")
-    public void authorizedConnection() throws IOException {
-        PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Gmail service = gmailAuthorization.getGmailService();
-
-        String user = "me";
-        ListLabelsResponse listResponse =
-                service.users().labels().list(user).execute();
-        List<Label> labels = listResponse.getLabels();
-        if (labels.size() == 0) {
-            System.out.println("No labels found.");
-        } else {
-            System.out.println("Labels:");
-            for (Label label : labels) {
-                System.out.printf("- %s\n", label.getName());
-            }
-        }
+        Assert.assertNotNull("Authoprization failed", service);
+        Serenity.getCurrentSession().put("service", service);
     }
 
     @When("user I get list of emails")
@@ -86,24 +65,29 @@ public class GmailDefinitions {
         // PENDING
     }
 
-    @Given("an email was sent from first google account")
-    public void givenAnEmailWasSentFromFirstGoogleAccount() throws GeneralSecurityException, MessagingException, IOException {
-        steps.sendEmail(firstAccount, secondAccount);
+    @Given("an email was sent by logged in user to '$emailTo', with content '$content'")
+    public void givenAnEmailWasSentFromFirstGoogleAccount(String emailTo, String content) {
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        steps.sendEmail(service,emailTo,content);
     }
 
     @When("the second account sends autoreply email in response")
     public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
-        steps.executeAutoResponder(secondAccount);
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        steps.executeAutoResponder(service,"to");
     }
 
     @Then("the first account gets autoreply email")
     public void thenTheFirstAccountGetAutoreplyEmail() {
-        assertTrue(steps.isAutoReplyReceived(firstAccount));
+
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        assertTrue(steps.isAutoReplyReceived(service,"from"));
     }
 
     @Then("doesn't send autoreply email in response")
     public void thenDoesntSendAutoreplyEmailInResponse() {
-        assertFalse(steps.isAutoReplyReceived(secondAccount));
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        assertFalse(steps.isAutoReplyReceived(service,"from"));
     }
 
 
