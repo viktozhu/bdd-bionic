@@ -12,8 +12,13 @@ import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
 import org.junit.Test;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.List;
+
+import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by viktozhu on 7/23/15.
@@ -22,10 +27,19 @@ public class GmailDefinitions {
     @Steps
     GmailSteps steps;
 
+    String firstAccount;
+    String secondAccount;
+
     @Given("authorized connection to gmail")
     public void authorizedConnection() throws IOException {
         PropertyLoader.loadPropertys();
-        Gmail service = GmailAuthorization.getGmailService();
+        GmailAuthorization gmailAuthorization = null;
+        try {
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        Gmail service = gmailAuthorization.getGmailService();
 
         String user = "me";
         ListLabelsResponse listResponse =
@@ -50,4 +64,47 @@ public class GmailDefinitions {
     public void shouldNotBeNewEmails(){
 
     }
+
+
+    @Given("google account user")
+    public void givenGoogleAccountUser() {
+        // PENDING
+    }
+
+    @When("user receives a new email")
+    public void whenUserReceivesANewEmail() {
+        // PENDING
+    }
+
+    @When("autoResponder is executed")
+    public void whenAutoResponderIsExecuted() {
+        // PENDING
+    }
+
+    @Then("autoResponder sends auto-reply email for this email")
+    public void thenAutoResponderSendsAutoreplyEmailForThisEmail() {
+        // PENDING
+    }
+
+    @Given("an email was sent from first google account")
+    public void givenAnEmailWasSentFromFirstGoogleAccount() throws GeneralSecurityException, MessagingException, IOException {
+        steps.sendEmail(firstAccount, secondAccount);
+    }
+
+    @When("the second account sends autoreply email in response")
+    public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
+        steps.executeAutoResponder(secondAccount);
+    }
+
+    @Then("the first account gets autoreply email")
+    public void thenTheFirstAccountGetAutoreplyEmail() {
+        assertTrue(steps.isAutoReplyReceived(firstAccount));
+    }
+
+    @Then("doesn't send autoreply email in response")
+    public void thenDoesntSendAutoreplyEmailInResponse() {
+        assertFalse(steps.isAutoReplyReceived(secondAccount));
+    }
+
+
 }
