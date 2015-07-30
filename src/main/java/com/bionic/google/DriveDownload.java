@@ -9,15 +9,21 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 public class DriveDownload {
+    private Drive service;
+    private File file;
+
+    public DriveDownload(Drive service, File file) {
+        this.service = service;
+        this.file = file;
+    }
+
     /**
      * Download a file's content.
      *
-     * @param service Drive API service instance.
-     * @param file    Drive File instance.
      * @return InputStream containing the file's content if successful,
      * {@code null} otherwise.
      */
-    public static InputStream downloadFile(Drive service, File file) {
+    private InputStream downloadFile() {
         if (file.getDownloadUrl() != null && file.getDownloadUrl().length() > 0) {
             try {
                 // uses alt=media query parameter to request content
@@ -33,13 +39,13 @@ public class DriveDownload {
         }
     }
 
-    public void saveFileToHDD(InputStream stream, String pathToSave) {
+    public void saveFileToHDD(String pathToSave) {
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
         try {
             // read this file into InputStream
-            inputStream = stream;
+            inputStream = downloadFile();
 
             // write the inputStream to a FileOutputStream
             outputStream =
