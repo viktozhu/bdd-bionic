@@ -1,11 +1,18 @@
 package com.bionic.jbehave.gdrive;
 
+import com.bionic.google.DriveUpload;
+import com.bionic.google.GmailAuthorization;
 import com.bionic.steps.GdriveSteps;
+import com.bionic.utils.PropertyLoader;
+import com.google.api.services.drive.Drive;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
+
+import java.io.IOException;
+import java.security.GeneralSecurityException;
 
 /**
  * Created by bdd on 7/30/15.
@@ -15,9 +22,19 @@ public class GdriveDefinitions {
     GdriveSteps steps;
 
     @Given("authorized connection to Gdrive")
-    @Pending
-    public void givenAuthorizedConnectionToGdrive() {
-        // PENDING
+    public void givenAuthorizedConnectionToGdrive() throws IOException {
+        PropertyLoader.loadPropertys();
+        GmailAuthorization gmailAuthorization = null;
+        try {
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
+
+        } catch (GeneralSecurityException e) {
+            e.printStackTrace();
+        }
+        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+
+        DriveUpload driveUpload = new DriveUpload();
+        driveUpload.insertFile(service,"testTxt.txt","test","/src/test/resources/testData/testPresentation.ppt");
     }
 
     @When("I upload <filename> to GDrive with <filesize>")

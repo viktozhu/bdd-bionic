@@ -7,7 +7,7 @@ public class FileHelper {
 
     public static String getFileHashSum(String filename){
         //TODO
-        return;
+        return "";
     }
 
 }

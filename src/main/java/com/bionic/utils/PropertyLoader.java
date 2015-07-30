@@ -13,6 +13,8 @@ public class PropertyLoader {
     private static Logger logger = LoggerFactory.getLogger(PropertyLoader.class);
 
     private static final String[] PROPERTY_FILE = {"/application.properties","/thucydides.properties"};
+    private static final String PROPERTY_FILE1 = "/application.properties";
+
     private static Properties properties = new Properties();
 
     public static void loadPropertys()
@@ -29,6 +31,22 @@ public class PropertyLoader {
         } catch (IOException e) {
             logger.error("No such property file",e);
         }
+    }
+
+    public static String loadProperty(String name)
+    {
+        Properties props = new Properties();
+        try {
+            props.load(PropertyLoader.class.getResourceAsStream(PROPERTY_FILE1));
+        } catch (IOException e) {
+            logger.error("No such property ",e);
+        }
+        String value = "";
+        if (name != null)
+        {
+            value = props.getProperty(name);
+        }
+        return value;
     }
 
     public static String getProperty(String name){
