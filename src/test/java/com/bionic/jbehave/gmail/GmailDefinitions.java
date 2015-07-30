@@ -13,12 +13,19 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
  * Created by viktozhu on 7/23/15.
  */
 public class GmailDefinitions {
     @Steps
     GmailSteps steps;
+
+    private static final String account1 = "bionic.bdd@gmail.com";
+    private static final String account2 = "bionic.bdd.test@gmail.com";
+
 
     @BeforeStories
     public void init() {
@@ -68,30 +75,30 @@ public class GmailDefinitions {
 
     @When("user receives a new email")
     public void whenUserReceivesANewEmail() {
-        steps.userSendsEmail("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com", "message4Test", "Some text...");
+        steps.userSendsEmail(account1, account2, "message4Test", "Some text...");
     }
 
     @When("Auto-Responder is executed")
     @Alias("the second account sends autoreply email in response")
     public void whenAutoResponderIsExecuted() {
-        steps.executeAutoResponderOn("bionic.bdd.test@gmail.com");
+        steps.executeAutoResponderOn(account2);
     }
 
     @Then("Auto-Responder sends auto-reply for this email")
     @Alias("the first account get autoreply email")
     public void thenAutoResponderSendsAutoreplyEmailForThisEmail() {
-        steps.shouldReceiveAutoReply("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com");
+        assertTrue(steps.shouldReceiveAutoReply(account1, account2));
     }
 
     @Given("an email was sent from first google account")
     public void givenAnEmailWasSentFromFirstGoogleAccount() {
-        steps.userSendsEmail("bionic.bdd@gmail.com", "bionic.bdd.test@gmail.com", "message4Test", "Some text...");
+        steps.userSendsEmail(account1, account2, "message4Test", "Some text...");
     }
 
     @Then("doesn't send autoreply email in response")
     public void thenDoesntSendAutoreplyEmailInResponse() {
-        steps.executeAutoResponderOn("bionic.bdd@gmail.com");
-
+        steps.executeAutoResponderOn(account1);
+        assertFalse(steps.shouldReceiveAutoReply(account2, account1));
     }
 
 

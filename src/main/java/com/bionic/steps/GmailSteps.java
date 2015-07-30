@@ -20,8 +20,8 @@ public class GmailSteps extends ScenarioSteps {
 
     @Step
     public void authorizeInit() {
-        accounts.put("bionic.bdd@gmail.com", userAuthorize("project-bdd", "bionic.bdd"));
-        accounts.put("bionic.bdd.test@gmail.com", userAuthorize("project-bdd2", "bionic.bdd.test"));
+        accounts.put("bionic.bdd@gmail.com", userAuthorize("bdd-project", "bionic.bdd"));
+        accounts.put("bionic.bdd.test@gmail.com", userAuthorize("bdd-project2", "bionic.bdd.test"));
     }
 
     @Step
@@ -35,12 +35,13 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     @Step
-    public void shouldReceiveAutoReply(String account, String from) {
+    public boolean shouldReceiveAutoReply(String account, String from) {
         /* Thread.sleep(7000);
         String query = "from:"+from+" subject:autoPeply is:unread";
         GmailEmailGetter emailGetter = new GmailEmailGetter(accounts.get(account));
-        assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query))
-                   .isNotEmpty();*/
+        return (emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).size() > 0;
+        //assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).isNotEmpty();
+        */
     }
 
 
