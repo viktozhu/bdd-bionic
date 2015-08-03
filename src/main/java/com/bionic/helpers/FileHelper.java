@@ -28,7 +28,7 @@ public class FileHelper {
 
     public static void createTestFile(String name, int size) {
         try {
-            String path = "src/test/resources/testData" + name;
+            String path = "target/" + name;
             RandomAccessFile file = new RandomAccessFile(path, "rw");
             file.setLength(size * 1024 * 1024);
 
