@@ -5,6 +5,7 @@ import com.bionic.google.GmailAuthorization;
 import com.bionic.steps.GdriveSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Given;
@@ -34,7 +35,8 @@ public class GdriveDefinitions {
         Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
 
         DriveUpload driveUpload = new DriveUpload();
-        driveUpload.insertFile(service,"testTxt.txt","test","/src/test/resources/testData/testPresentation.ppt");
+        driveUpload.insertFile
+                (service,"BDD","test","test","D:\\bdd-bionic-main\\src\\test\\resources\\testData\\testGif.gif");
     }
 
     @When("I upload <filename> to GDrive with <filesize>")
