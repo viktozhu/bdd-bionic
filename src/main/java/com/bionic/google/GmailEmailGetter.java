@@ -14,10 +14,10 @@ public class GmailEmailGetter {
     private static final String USER_ID = "me";
     private static final String UNREAD_EMAIL_QUERY = "is: unread";
     private static final String INBOX_EMAIL_QUERY = "in: inbox";
-    private Gmail email;
+    private Gmail service;
 
-    public GmailEmailGetter(Gmail email) {
-        this.email = email;
+    public GmailEmailGetter(Gmail service) {
+        this.service = service;
     }
 
     /**
@@ -105,7 +105,7 @@ public class GmailEmailGetter {
     public List<Message> getUnreadMessages() {
         String unreadInInboxEmailQuery = UNREAD_EMAIL_QUERY + " + " + INBOX_EMAIL_QUERY;
         try {
-            return listMessagesMatchingQuery(email, USER_ID, unreadInInboxEmailQuery);
+            return listMessagesMatchingQuery(service, USER_ID, unreadInInboxEmailQuery);
         } catch (IOException e) {
             e.printStackTrace();
         }
