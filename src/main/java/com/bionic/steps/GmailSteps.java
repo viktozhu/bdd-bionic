@@ -2,7 +2,7 @@ package com.bionic.steps;
 
 import com.bionic.google.EmailSender;
 import com.bionic.google.GmailAuthorization;
-import com.bionic.google.GmailReceiver;
+import com.bionic.google.GmailEmailGetter;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
@@ -13,9 +13,7 @@ import org.junit.Assert;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by viktozhu on 7/27/15.
@@ -82,7 +80,7 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     public boolean isAutoReplyReceived(Gmail service, String from) {
-        GmailReceiver receiver = new GmailReceiver(service);
+        GmailEmailGetter receiver = new GmailEmailGetter(service);
         List<Message> receivedMessages = receiver.getUnreadMessages();
         return receivedMessages.stream().anyMatch(m -> isAutoReply(m));
     }
