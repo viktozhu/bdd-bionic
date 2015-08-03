@@ -36,7 +36,7 @@ public class GdriveDefinitions {
 
         DriveUpload driveUpload = new DriveUpload();
         driveUpload.insertFile
-                (service,"BDD","test","test","D:\\bdd-bionic-main\\src\\test\\resources\\testData\\testGif.gif");
+                (service,"BDD","test","test","/src/test/resources/testData/testGif.gif");
     }
 
     @When("I upload <filename> to GDrive with <filesize>")
