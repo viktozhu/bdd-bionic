@@ -1,8 +1,8 @@
 package com.bionic.steps;
 
+import com.bionic.google.EmailGetter;
 import com.bionic.google.EmailSender;
 import com.bionic.google.GmailAuthorization;
-import com.bionic.google.GmailEmailGetter;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
@@ -29,7 +29,7 @@ public class GmailSteps extends ScenarioSteps {
     public boolean shouldReceiveAutoReply(String account, String from) {
         /* Thread.sleep(7000);
         String query = "from:"+from+" subject:autoPeply is:unread";
-        GmailEmailGetter emailGetter = new GmailEmailGetter(accounts.get(account));
+        EmailGetter emailGetter = new EmailGetter(accounts.get(account));
         return (emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).size() > 0;
         //assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).isNotEmpty();
         */
@@ -80,7 +80,7 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     public boolean isAutoReplyReceived(Gmail service, String from) {
-        GmailEmailGetter receiver = new GmailEmailGetter(service);
+        EmailGetter receiver = new EmailGetter(service);
         List<Message> receivedMessages = receiver.getUnreadMessages();
         return receivedMessages.stream().anyMatch(m -> isAutoReply(m));
     }
