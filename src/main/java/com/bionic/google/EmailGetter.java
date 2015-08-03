@@ -10,13 +10,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GmailEmailGetter {
+public class EmailGetter {
     private static final String USER_ID = "me";
     private static final String UNREAD_EMAIL_QUERY = "is: unread";
     private static final String INBOX_EMAIL_QUERY = "in: inbox";
     private Gmail service;
 
-    public GmailEmailGetter(Gmail service) {
+    public EmailGetter(Gmail service) {
         this.service = service;
     }
 
