@@ -2,7 +2,6 @@ package com.bionic.helpers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.io.RandomAccessFile;
 import java.util.Random;
 
 public class FileHelper {
-
     private static Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
     public static String getFileHashSum(String pathToFile) {
@@ -26,22 +24,24 @@ public class FileHelper {
         return md5;
     }
 
-    public static void createTestFile(String name, int size) {
+    public static File createTestFile(String name, int size) {
+        File file = new File("target/" + name);
+        RandomAccessFile randomFile = null;
         try {
-            String path = "target/" + name;
-            RandomAccessFile file = new RandomAccessFile(path, "rw");
-            file.setLength(size * 1024 * 1024);
+            randomFile = new RandomAccessFile(file, "rw");
+            randomFile.setLength(size * 1024 * 1024);
 
             //change content of file with random values
             byte[] rndBytes = new byte[100];
             Random rnd = new Random();
             rnd.nextBytes(rndBytes);
 
-            file.write(rndBytes);
-            file.close();
-            logger.info("File "+name+" was created");
+            randomFile.write(rndBytes);
+            randomFile.close();
+            logger.info("File " + name + " was created");
         } catch (IOException e) {
             logger.error("Error while creating " + name, e);
         }
+        return file;
     }
 }
