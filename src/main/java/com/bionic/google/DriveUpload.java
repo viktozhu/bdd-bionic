@@ -61,24 +61,19 @@ public class DriveUpload {
 
     private static File createPublicFolder(Drive service, String folderName) throws IOException {
         File body = new File();
-        if(body.getTitle().equals(folderName)){
-            System.out.println(body.getTitle());
-            return body;
-        }
-        else {
-            body.setTitle(folderName);
-            body.setMimeType("application/vnd.google-apps.folder");
 
-            File file = service.files().insert(body).execute();
+        body.setTitle(folderName);
+        body.setMimeType("application/vnd.google-apps.folder");
 
-            Permission permission = new Permission();
-            permission.setValue("");
-            permission.setType("anyone");
-            permission.setRole("reader");
+        File file = service.files().insert(body).execute();
 
-            service.permissions().insert(file.getId(), permission).execute();
+        Permission permission = new Permission();
+        permission.setValue("");
+        permission.setType("anyone");
+        permission.setRole("reader");
 
-            return file;
-        }
+        service.permissions().insert(file.getId(), permission).execute();
+
+        return file;
     }
 }

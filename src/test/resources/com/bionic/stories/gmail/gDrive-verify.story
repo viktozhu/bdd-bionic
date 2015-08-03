@@ -1,5 +1,6 @@
 Meta:
 @issue BDD-003
+@ignore
 
 Narrative:
 As a user of gDriveConsole

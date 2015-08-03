@@ -1,7 +1,6 @@
 Meta:
 @ignore
 @issue BDD-001
-@ignore
 
 Narrative:
 As a user
