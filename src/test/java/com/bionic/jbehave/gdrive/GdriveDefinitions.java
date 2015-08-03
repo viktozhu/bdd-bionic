@@ -2,12 +2,14 @@ package com.bionic.jbehave.gdrive;
 
 import com.bionic.google.DriveUpload;
 import com.bionic.google.GmailAuthorization;
+import com.bionic.helpers.FileHelper;
 import com.bionic.steps.GdriveSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
+import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -68,5 +70,29 @@ public class GdriveDefinitions {
     public void thenDownloadTimeToolLessThan20Seconds() {
         // PENDING
     }
+
+    @Given("a file $name with size of $size Mb")
+    @Alias("a differ file $name with size of $size Mb is in the same directory")
+    public void givenAFiletesttxtWithSizeOf3Mb(String name, int size) {
+        FileHelper.createTestFile(name, size);
+    }
+
+    @Given("another file $name isn't in the same directory")
+    public void givenAnotherFileIsntInDirectory(String name) {
+        //Pending
+    }
+
+    @When("I use '-verify' option with these two files")
+    @Pending
+    public void whenIUseverifyOptionWithTheseTwoFiles() {
+
+    }
+
+
+   @Then("App notifies me that files are different")
+   @Pending
+   public void thenAppNotifiesMeThatFilesAreDifferent() {
+      // PENDING
+   }
 
 }
