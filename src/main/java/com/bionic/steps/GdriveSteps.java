@@ -29,7 +29,7 @@ public class GdriveSteps extends ScenarioSteps{
     public void authorizeToGdrive() {
         GmailAuthorization gmailAuthorization = null;
         try {
-            gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.gdrive.secret.json");
+            gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/client_secret_drive.json");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (GeneralSecurityException e) {
