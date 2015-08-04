@@ -9,13 +9,11 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-/**
- * Created by bdd on 7/30/15.
- */
 public class GdriveSteps extends ScenarioSteps{
 
     private Drive drive = null;
@@ -30,9 +28,7 @@ public class GdriveSteps extends ScenarioSteps{
         GmailAuthorization gmailAuthorization = null;
         try {
             gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.secret.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
+        } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
         try {
@@ -55,7 +51,9 @@ public class GdriveSteps extends ScenarioSteps{
 
     @Step
     public void downloadFile() {
-        new DriveDownload(drive, uploadedFile).saveFileToHDD(pathToDownloadedFile);
+        DriveDownload driveDownload = new DriveDownload();
+        InputStream stream = driveDownload.downloadFile(drive, uploadedFile);
+        driveDownload.saveFileToHDD(stream, pathToDownloadedFile);
     }
 
     @Step
