@@ -47,7 +47,7 @@ public class GdriveSteps extends ScenarioSteps{
         this.pathToOriginalFile = filename;
         DriveUpload driveUpload = new DriveUpload();
         try {
-            uploadedFile = driveUpload.insertFile(drive, "UploadedTestFile", "This is uploaded test file!", filename, "");
+            uploadedFile = driveUpload.insertFile(drive, "UploadedTestFile", "This is uploaded test file!", filename);
         } catch (IOException e) {
             e.printStackTrace();
         }
