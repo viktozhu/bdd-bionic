@@ -4,6 +4,7 @@ import com.bionic.google.DriveDownload;
 import com.bionic.google.DriveUpload;
 import com.bionic.google.GmailAuthorization;
 import com.bionic.helpers.FileHelper;
+import com.bionic.helpers.RunHelper;
 import com.google.api.services.drive.Drive;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
@@ -70,5 +71,20 @@ public class GdriveSteps extends ScenarioSteps{
 
     public void downloadTimeShouldTakeLessThan(String expectedSeconds) {
         //Todo
+    }
+
+    @Step
+    public void createTestFile(String name, int size) {
+        FileHelper.createTestFile(name, size);
+    }
+
+    @Step
+    public void runApplication(String parameters) {
+        String output = RunHelper.runJar("src\\test\\resources\\App.jar", parameters);
+        //Serenity.getCurrentSession().put();
+    }
+
+    public void checkAppOutput(String template) {
+        //Serenity.getCurrentSession().get();
     }
 }
