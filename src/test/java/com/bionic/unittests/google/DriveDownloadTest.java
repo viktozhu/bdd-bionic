@@ -1,6 +1,7 @@
-package com.bionic.google;
+package com.bionic.unittests.google;
 
 
+import com.bionic.google.DriveDownload;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
