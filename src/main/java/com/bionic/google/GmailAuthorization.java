@@ -26,23 +26,11 @@ import java.util.List;
 
 import static com.bionic.utils.PropertyLoader.getProperty;
 
-/**
- * Created by viktozhu on 7/23/15.
- */
 public class GmailAuthorization {
 
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
     private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
-
-    static {
-        try {
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-    }
 
     private String applicationName;
     private java.io.File dataStoreDir;
