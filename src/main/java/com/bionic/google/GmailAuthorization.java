@@ -31,11 +31,6 @@ import static com.bionic.utils.PropertyLoader.getProperty;
  */
 public class GmailAuthorization {
 
-    private String applicationName;
-    private java.io.File dataStoreDir;
-    private FileDataStoreFactory dataStoreFactory;
-    private String pathToClientSecret;
-    private HttpTransport httpTransport;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
     private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
@@ -48,6 +43,12 @@ public class GmailAuthorization {
             System.exit(1);
         }
     }
+
+    private String applicationName;
+    private java.io.File dataStoreDir;
+    private FileDataStoreFactory dataStoreFactory;
+    private String pathToClientSecret;
+    private HttpTransport httpTransport;
 
 
     public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {

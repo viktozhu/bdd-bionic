@@ -6,7 +6,7 @@ import org.jbehave.core.annotations.BeforeStories;
 
 public class AcceptanceTestSuite extends SerenityStories {
     @BeforeStories
-    public void setup(){
+    public void setup() {
         PropertyLoader.loadPropertys();
     }
 }

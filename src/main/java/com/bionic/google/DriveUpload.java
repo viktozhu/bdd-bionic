@@ -7,7 +7,6 @@ import com.google.api.services.drive.model.File;
 import com.google.api.services.drive.model.ParentReference;
 import com.google.api.services.drive.model.Permission;
 
-
 import javax.activation.MimetypesFileTypeMap;
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,39 +23,9 @@ public class DriveUpload {
         return absolutePath;
     }
 
-    public static String getMimeType(String filePath){
+    public static String getMimeType(String filePath) {
         MimetypesFileTypeMap mimetypesFileTypeMap = new MimetypesFileTypeMap();
         return mimetypesFileTypeMap.getContentType(filePath);
-    }
-
-    public File insertFile(Drive service, String folderName, String title, String description, String filename) throws IOException {
-        // File's metadata.
-        String mimeType = getMimeType(getFilePath(filename));
-        File body = new File();
-        body.setTitle(title);
-        body.setDescription(description);
-        body.setMimeType(mimeType);
-
-        // Set the parent folder.
-        String parentId = createPublicFolder(service,folderName).getId();
-
-        if (parentId != null && parentId.length() > 0) {
-            body.setParents(
-                    Arrays.asList(new ParentReference().setId(parentId)));
-        }
-
-        // File's content.
-        java.io.File fileContent = new java.io.File(getFilePath(filename));
-        FileContent mediaContent = new FileContent(mimeType, fileContent);
-        try {
-            File file = service.files().insert(body, mediaContent).execute();
-            System.out.println("File ID: " + file.getId());
-
-            return file;
-        } catch (IOException e) {
-            System.out.println("An error occured: " + e);
-            return null;
-        }
     }
 
     private static File createPublicFolder(Drive service, String folderName) throws IOException {
@@ -75,5 +44,35 @@ public class DriveUpload {
         service.permissions().insert(file.getId(), permission).execute();
 
         return file;
+    }
+
+    public File insertFile(Drive service, String folderName, String title, String description, String filename) throws IOException {
+        // File's metadata.
+        String mimeType = getMimeType(getFilePath(filename));
+        File body = new File();
+        body.setTitle(title);
+        body.setDescription(description);
+        body.setMimeType(mimeType);
+
+        // Set the parent folder.
+        String parentId = createPublicFolder(service, folderName).getId();
+
+        if (parentId != null && parentId.length() > 0) {
+            body.setParents(
+                    Arrays.asList(new ParentReference().setId(parentId)));
+        }
+
+        // File's content.
+        java.io.File fileContent = new java.io.File(getFilePath(filename));
+        FileContent mediaContent = new FileContent(mimeType, fileContent);
+        try {
+            File file = service.files().insert(body, mediaContent).execute();
+            System.out.println("File ID: " + file.getId());
+
+            return file;
+        } catch (IOException e) {
+            System.out.println("An error occured: " + e);
+            return null;
+        }
     }
 }

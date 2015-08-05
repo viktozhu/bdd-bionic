@@ -2,7 +2,9 @@ package com.bionic.unittests.helpers;
 
 import com.bionic.helpers.FileHelper;
 import org.junit.Test;
+
 import java.io.File;
+
 import static org.junit.Assert.*;
 
 public class FileHelperTest {
@@ -35,6 +37,6 @@ public class FileHelperTest {
         if (file.exists()) {
             size = file.length() / 1024 / 1024;
         }
-        return  size;
+        return size;
     }
 }

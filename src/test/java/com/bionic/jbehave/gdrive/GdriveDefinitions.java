@@ -1,21 +1,13 @@
 package com.bionic.jbehave.gdrive;
 
-import com.bionic.google.DriveUpload;
-import com.bionic.google.GmailAuthorization;
 import com.bionic.helpers.FileHelper;
 import com.bionic.steps.GdriveSteps;
-import com.bionic.utils.PropertyLoader;
-import com.google.api.services.drive.Drive;
-import com.google.api.services.drive.model.File;
 import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 
 /**
  * Created by bdd on 7/30/15.
@@ -24,23 +16,26 @@ public class GdriveDefinitions {
     @Steps
     GdriveSteps steps;
 
-    /** Overwritten by my merge forever :-)  
-    @Given("authorized connection to Gdrive")
-    public void givenAuthorizedConnectionToGdrive2() throws IOException {
-        PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
-
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
-
-        DriveUpload driveUpload = new DriveUpload();
-        driveUpload.insertFile
-                (service,"BDD","test","test","/src/test/resources/testData/testGif.gif");
-    } **/
+    /**
+     * Overwritten by my merge forever :-)
+     *
+     * @Given("authorized connection to Gdrive")
+     * public void givenAuthorizedConnectionToGdrive2() throws IOException {
+     * PropertyLoader.loadPropertys();
+     * GmailAuthorization gmailAuthorization = null;
+     * try {
+     * gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
+     * <p/>
+     * } catch (GeneralSecurityException e) {
+     * e.printStackTrace();
+     * }
+     * Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+     * <p/>
+     * DriveUpload driveUpload = new DriveUpload();
+     * driveUpload.insertFile
+     * (service,"BDD","test","test","/src/test/resources/testData/testGif.gif");
+     * }
+     **/
 
     @Given("authorized connection to Gdrive")
     public void givenAuthorizedConnectionToGdrive() {
@@ -94,10 +89,10 @@ public class GdriveDefinitions {
     }
 
 
-   @Then("App notifies me that files are different")
-   @Pending
-   public void thenAppNotifiesMeThatFilesAreDifferent() {
-      // PENDING
-   }
+    @Then("App notifies me that files are different")
+    @Pending
+    public void thenAppNotifiesMeThatFilesAreDifferent() {
+        // PENDING
+    }
 
 }

@@ -5,7 +5,6 @@ import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
 import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Steps;
-import org.jbehave.core.annotations.Alias;
 import org.jbehave.core.annotations.Given;
 import org.jbehave.core.annotations.Then;
 import org.jbehave.core.annotations.When;
@@ -18,11 +17,10 @@ import static org.junit.Assert.assertTrue;
  * Created by viktozhu on 7/23/15.
  */
 public class GmailDefinitions {
-    @Steps
-    GmailSteps steps;
-
     private static final String account1 = "bionic.bdd@gmail.com";
     private static final String account2 = "bionic.bdd.test@gmail.com";
+    @Steps
+    GmailSteps steps;
 
     @Given("authorized connection to gmail as '$user' user")
     public void authorizedConnection(String guser) {
@@ -35,19 +33,19 @@ public class GmailDefinitions {
     }
 
     @When("user I get list of emails")
-    public void getEmailList(){
+    public void getEmailList() {
 
     }
 
     @Then("no new emails recevied")
-    public void shouldNotBeNewEmails(){
+    public void shouldNotBeNewEmails() {
 
     }
 
     @When("user receives a new email")
     public void whenUserReceivesANewEmail(String to, String content) {
         Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        steps.sendEmail(service,to,content);
+        steps.sendEmail(service, to, content);
     }
 
     @Given("Auto-Responder application is running")

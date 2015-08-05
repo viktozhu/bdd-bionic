@@ -14,7 +14,7 @@ import java.security.GeneralSecurityException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GdriveSteps extends ScenarioSteps{
+public class GdriveSteps extends ScenarioSteps {
 
     private Drive drive = null;
     private com.google.api.services.drive.model.File uploadedFile;
@@ -27,7 +27,7 @@ public class GdriveSteps extends ScenarioSteps{
     public void authorizeToGdrive() {
         GmailAuthorization gmailAuthorization = null;
         try {
-            gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.secret.json");
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }

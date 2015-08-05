@@ -11,11 +11,11 @@ import java.util.List;
 public class GmailReceiver {
     private Gmail service;
 
-    public GmailReceiver(Gmail service){
+    public GmailReceiver(Gmail service) {
         this.service = service;
     }
 
-    public List<Message> getUnreadMessages(){
+    public List<Message> getUnreadMessages() {
         return null;
     }
 }

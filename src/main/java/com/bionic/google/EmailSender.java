@@ -5,21 +5,21 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import java.io.*;
-import java.util.Properties;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.Properties;
 
 public class EmailSender {
     private String pathToJsonWithAutoReply = "src\\main\\resources\\auto-reply.json";
@@ -34,14 +34,14 @@ public class EmailSender {
     /**
      * Create a MimeMessage using the parameters provided.
      *
-     * @param to Email address of the receiver.
-     * @param subject Subject of the email.
+     * @param to       Email address of the receiver.
+     * @param subject  Subject of the email.
      * @param bodyText Body text of the email.
      * @return MimeMessage to be used to send email.
      * @throws MessagingException
      */
     public MimeMessage createEmail(String to, String subject,
-                                          String bodyText) throws MessagingException {
+                                   String bodyText) throws MessagingException {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 
@@ -57,16 +57,16 @@ public class EmailSender {
     /**
      * Create a MimeMessage using the parameters provided.
      *
-     * @param to Email address of the receiver.
-     * @param subject Subject of the email.
+     * @param to       Email address of the receiver.
+     * @param subject  Subject of the email.
      * @param bodyText Body text of the email.
-     * @param fileDir Path to the directory containing attachment.
+     * @param fileDir  Path to the directory containing attachment.
      * @param filename Name of file to be attached.
      * @return MimeMessage to be used to send email.
      * @throws MessagingException
      */
     public MimeMessage createEmailWithAttachment(String to, String subject,
-                                                        String bodyText, String fileDir, String filename) throws MessagingException, IOException {
+                                                 String bodyText, String fileDir, String filename) throws MessagingException, IOException {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
 

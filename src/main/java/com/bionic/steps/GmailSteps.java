@@ -13,9 +13,7 @@ import org.junit.Assert;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by viktozhu on 7/27/15.
@@ -54,9 +52,9 @@ public class GmailSteps extends ScenarioSteps {
             return service;
 
         } catch (GeneralSecurityException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
+            Assert.fail("Incorrect SECRET KEY:" + e.toString());
         } catch (IOException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
+            Assert.fail("Incorrect SECRET KEY:" + e.toString());
         }
 
         return null;
@@ -76,7 +74,7 @@ public class GmailSteps extends ScenarioSteps {
         }
     }
 
-    public void executeAutoResponder(Gmail service, String to){
+    public void executeAutoResponder(Gmail service, String to) {
         EmailSender sender = new EmailSender(service);
         sender.sendAutoReplyMessage(to);
     }
@@ -87,7 +85,7 @@ public class GmailSteps extends ScenarioSteps {
         return receivedMessages.stream().anyMatch(m -> isAutoReply(m));
     }
 
-    private boolean isAutoReply(Message message){
+    private boolean isAutoReply(Message message) {
         // TODO: implement check logic
         return true;
     }
