@@ -91,30 +91,35 @@ public class DriveUpload {
         FileList files = request.execute();
         File body = new File();
 
+        boolean ok = true;
         try {
             for (int i=0;i<request.size();i++) {
                 if (files.getItems().get(i).getTitle().equals(folderName)) {
                     body = files.getItems().get(i);
+                    ok = false;
                     break;
                 }
             }
         } catch (IndexOutOfBoundsException e){
             if(e.getMessage().contains("Index: 0, Size: 0")){
-                body.setTitle(folderName);
-                body.setMimeType("application/vnd.google-apps.folder");
-
-                File file = service.files().insert(body).execute();
-
-                Permission permission = new Permission();
-                permission.setValue("");
-                permission.setType("anyone");
-                permission.setRole("reader");
-
-                service.permissions().insert(file.getId(), permission).execute();
-
-                System.out.println(file);
-                return file;
+                ok = true;
             }
+        }
+        if(ok){
+            body.setTitle(folderName);
+            body.setMimeType("application/vnd.google-apps.folder");
+
+            File file = service.files().insert(body).execute();
+
+            Permission permission = new Permission();
+            permission.setValue("");
+            permission.setType("anyone");
+            permission.setRole("reader");
+
+            service.permissions().insert(file.getId(), permission).execute();
+
+            System.out.println(file);
+            return file;
         }
         return body;
     }
