@@ -235,9 +235,8 @@
                                 <configuration>
                                     <mainClass>com.bionic.google.GdriveApp</mainClass>
                                     <arguments>
-                                        <argument>Upload</argument>
-                                        <argument>Download</argument>
-                                        <argument>Verify</argument>
+                                        <argument>-upload</argument>
+                                        <argument>/src/test/resources/testData/testTxt.txt</argument>
                                     </arguments>
                                 </configuration>
                             </execution>

@@ -3,6 +3,9 @@ package com.bionic.google;
 import com.bionic.helpers.FileHelper;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import org.openqa.jetty.log.LogStream;
+
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -10,7 +13,7 @@ import java.security.GeneralSecurityException;
  * Created by 1 on 05.08.2015.
  */
 public class GdriveApp {
-    public static void main(String [] args) throws IOException {
+    public static void main(String[] args) throws IOException {
 
         PropertyLoader.loadPropertys();
         GmailAuthorization gmailAuthorization = null;
@@ -24,27 +27,31 @@ public class GdriveApp {
         }
         Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
 
-        for(int i=0; i<args.length;i++){
-            if(args[i].equals("Upload")){
+        if (args[0].equals("-upload")) {
+            try {
                 DriveUpload driveUpload = new DriveUpload();
                 driveUpload.insertFileInFolder
-                        (service, "BDD", "testTxt.txt", "testTxt.txt", "/src/test/resources/testData/testTxt.txt");
+                        (service, "BDD", "testTxt.txt", "testTxt.txt", args[1]);
+                System.out.println("OK");
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("1");
             }
-            else if(args[i].equals("Download")){
-                System.out.println("Download not implemented completely");
+        } else if (args[0].equals("-download")) {
+            System.out.println("Download not implemented completely");
+        } else if (args[0].equals("-verify")) {
+            String file1 = FileHelper
+                    .getFileHashSum(DriveUpload.getFilePath(args[1]));
+            String file2 = FileHelper
+                    .getFileHashSum(DriveUpload.getFilePath(args[2]));
+            if (file1.equals(file2)) {
+                System.out.println("OK");
+            } else {
+                System.out.println("NOK");
             }
-            else if(args[i].equals("Verify")) {
-                String file1 =FileHelper
-                        .getFileHashSum(DriveUpload.getFilePath("/src/test/resources/testData/testTxt.txt"));
-                String file2 =FileHelper
-                        .getFileHashSum(DriveUpload.getFilePath("/src/test/resources/testData/testTxt.txt"));
-                if(file1.equals(file2)){
-                    System.out.println("Verify method works correctly");
-                }
-            }
-            else {
-                System.out.println("Incorrect argument");
-            }
+        } else {
+            System.out.println("NOK. Incorrect argument");
+
         }
     }
 }
