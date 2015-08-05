@@ -118,21 +118,4 @@ public class DriveUpload {
         }
         return body;
     }
-
-//    public static void main (String [] args) throws IOException { Who interested can check
-//        PropertyLoader.loadPropertys();
-//        GmailAuthorization gmailAuthorization = null;
-//        try {
-//            gmailAuthorization =
-//                    new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
-//
-//        } catch (GeneralSecurityException e) {
-//            e.printStackTrace();
-//        }
-//        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
-//
-//        DriveUpload driveUpload = new DriveUpload();
-//        driveUpload.insertFileInFolder
-//                (service,"BDD","testTxt.txt", "testTxt.txt", "/src/test/resources/testData/testTxt.txt");
-//    }
 }
