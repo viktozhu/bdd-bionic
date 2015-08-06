@@ -58,7 +58,7 @@ public class DriveDownload {
                 outputStream.write(bytes, 0, read);
             }
 
-            System.out.println("Done!");
+            System.out.println("OK");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -77,10 +77,8 @@ public class DriveDownload {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
-
 }
 

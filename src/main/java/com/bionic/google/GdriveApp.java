@@ -4,7 +4,6 @@ import com.bionic.helpers.FileHelper;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
-import org.openqa.jetty.log.LogStream;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -13,6 +12,20 @@ import java.security.GeneralSecurityException;
  * Created by 1 on 05.08.2015.
  */
 public class GdriveApp {
+
+    public static File fileUpload(Drive service,String folderName, String title, String desc,String filePath){
+        File file = null;
+        try {
+            DriveUpload driveUpload = new DriveUpload();
+            file = driveUpload.insertFileInFolder
+                    (service, folderName, title, desc, filePath);
+            System.out.println("OK");
+        } catch (Exception e) {
+            System.out.println("NOK");
+            System.exit(1);
+        }
+        return file;
+    }
     public static void main(String[] args) throws IOException {
 
         PropertyLoader.loadPropertys();
@@ -27,20 +40,19 @@ public class GdriveApp {
             System.exit(1);
         }
         Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+        String filePathParts [] = args[1].split("/");
 
         if (args[0].equals("-upload")) {
-            try {
-                DriveUpload driveUpload = new DriveUpload();
-                driveUpload.insertFileInFolder
-                        (service, "BDD", "Test file", "file for test", args[1]);
-                System.out.println("OK");
-            } catch (Exception e) {
-                System.out.println("NOK");
-                System.exit(1);
-            }
-        } else if (args[0].equals("-download")) {
-            System.out.println("Download not implemented completely");
-        } else if (args[0].equals("-verify")) {
+            fileUpload(service,"BDD",filePathParts[filePathParts.length - 1],"test desc",args[1]);
+        }
+        else if (args[0].equals("-download")) {
+            System.out.println
+                   ("Prerequisite: file \"" + filePathParts[filePathParts.length - 1] + "\" should be uploaded");
+            File file = fileUpload(service,"BDD",filePathParts[filePathParts.length - 1],"test desc",args[1]);
+                DriveDownload driveDownload = new DriveDownload(service,file);
+                driveDownload.saveFileToHDD(DriveUpload.getFilePath(args[2]));
+        }
+        else if (args[0].equals("-verify")) {
             String file1 = FileHelper
                     .getFileHashSum(DriveUpload.getFilePath(args[1]));
             String file2 = FileHelper
