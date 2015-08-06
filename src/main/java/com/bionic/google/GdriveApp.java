@@ -24,6 +24,7 @@ public class GdriveApp {
 
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
+            System.exit(1);
         }
         Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
 
@@ -31,11 +32,11 @@ public class GdriveApp {
             try {
                 DriveUpload driveUpload = new DriveUpload();
                 driveUpload.insertFileInFolder
-                        (service, "BDD", "testTxt.txt", "testTxt.txt", args[1]);
+                        (service, "BDD", "Test file", "file for test", args[1]);
                 System.out.println("OK");
             } catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("1");
+                System.out.println("NOK");
+                System.exit(1);
             }
         } else if (args[0].equals("-download")) {
             System.out.println("Download not implemented completely");
@@ -48,10 +49,11 @@ public class GdriveApp {
                 System.out.println("OK");
             } else {
                 System.out.println("NOK");
+                System.exit(1);
             }
         } else {
-            System.out.println("NOK. Incorrect argument");
-
+            System.out.println("NOK");
+            System.exit(1);
         }
     }
 }
