@@ -39,7 +39,7 @@ public class GdriveDefinitions {
     public void whenIUploadfilenameToGDriveWithfilesize(@Named("filename") String filename,
                                                         @Named("filesize") String filesize ) {
         steps.createTestFile(filename, Integer.valueOf(filesize.substring(0, filesize.indexOf('M'))));
-        steps.uploadFile("target\\" + filename);
+        steps.uploadFile("target/" + filename);
     }
 
     @When("I download <filename> from GDrive")
