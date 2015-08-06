@@ -6,7 +6,9 @@ import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.GeneralSecurityException;
+import java.time.Instant;
 
 /**
  * Created by 1 on 05.08.2015.
@@ -47,10 +49,11 @@ public class GdriveApp {
         }
         else if (args[0].equals("-download")) {
             System.out.println
-                   ("Prerequisite: file \"" + filePathParts[filePathParts.length - 1] + "\" should be uploaded");
+                    ("Prerequisite: file \"" + filePathParts[filePathParts.length - 1] + "\" should be uploaded");
             File file = fileUpload(service,"BDD",filePathParts[filePathParts.length - 1],"test desc",args[1]);
-                DriveDownload driveDownload = new DriveDownload(service,file);
-                driveDownload.saveFileToHDD(DriveUpload.getFilePath(args[2]));
+            DriveDownload driveDownload = new DriveDownload();
+            InputStream stream = driveDownload.downloadFile(service, file);
+            driveDownload.saveFileToHDD(stream, DriveUpload.getFilePath(args[2]));
         }
         else if (args[0].equals("-verify")) {
             String file1 = FileHelper
