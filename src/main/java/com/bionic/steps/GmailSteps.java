@@ -61,10 +61,8 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     @Step
-    public void sendEmail(Gmail service, String mailTo, String content) {
+    public void sendEmail(Gmail service, String mailTo, Gson json) {
         EmailSender sender = new EmailSender(service);
-        Gson json = new Gson();
-        json.toJson(content);
         try {
             sender.sendMessage(mailTo, json);
         } catch (MessagingException e) {
