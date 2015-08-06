@@ -1,5 +1,6 @@
 package com.bionic.helpers;
 
+import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,7 +16,9 @@ public class RunHelper {
     private static Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
     public static String runJar(String path, String parameters) {
-        ProcessBuilder pb = new ProcessBuilder("java", "-jar", path, parameters);
+        String[] cmdArr = {"java", "-jar", path};
+        String[] paramsArr = parameters.split(" ");
+        ProcessBuilder pb = new ProcessBuilder(ArrayUtils.addAll(cmdArr, paramsArr));
         Process process = null;
         try {
             process = pb.start();

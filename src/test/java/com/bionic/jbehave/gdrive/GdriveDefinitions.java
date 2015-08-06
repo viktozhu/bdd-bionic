@@ -1,12 +1,8 @@
 package com.bionic.jbehave.gdrive;
 
 import com.bionic.steps.GdriveSteps;
-import net.thucydides.core.annotations.Pending;
 import net.thucydides.core.annotations.Steps;
-import org.jbehave.core.annotations.Alias;
-import org.jbehave.core.annotations.Given;
-import org.jbehave.core.annotations.Then;
-import org.jbehave.core.annotations.When;
+import org.jbehave.core.annotations.*;
 
 /**
  * Created by bdd on 7/30/15.
@@ -40,10 +36,11 @@ public class GdriveDefinitions {
 
 
     @When("I upload <filename> to GDrive with <filesize>")
-    public void whenIUploadfilenameToGDriveWithfilesize(String filename) {
-        steps.uploadFile(filename);
+    public void whenIUploadfilenameToGDriveWithfilesize(@Named("filename") String filename,
+                                                        @Named("filesize") String filesize ) {
+        steps.createTestFile(filename, Integer.valueOf(filesize.substring(0, filesize.indexOf('M'))));
+        steps.uploadFile("target\\" + filename);
     }
-
 
     @When("I download <filename> from GDrive")
     public void whenIDownloadfilenameFromGDrive() {
@@ -55,15 +52,13 @@ public class GdriveDefinitions {
         steps.filesShouldBeEqual();
     }
 
-    @Then("Upload time took less than '15' seconds")
-    @Pending
-    public void thenUploadTimeTookLessThan15Seconds(String seconds) {
-        steps.uploadTimeShouldTakeLessThan15Seconds(seconds);
+    @Then("Upload time took less than '$seconds' seconds")
+    public void thenUploadTimeTookLessThan15Seconds(int seconds) {
+        steps.uploadTimeShouldTakeLessThan(seconds);
     }
 
-    @Then("Download time tool less than '20' seconds")
-    @Pending
-    public void thenDownloadTimeToolLessThan(String seconds) {
+    @Then("Download time tool less than '$seconds' seconds")
+    public void thenDownloadTimeToolLessThan(int seconds) {
         steps.downloadTimeShouldTakeLessThan(seconds);
     }
 
@@ -75,20 +70,18 @@ public class GdriveDefinitions {
 
     @Given("another file $name isn't in the same directory")
     public void givenAnotherFileIsntInDirectory(String name) {
-        //Pending
+        //Nothing to do
     }
 
     @When("I run application with parameters '$parameters'")
-    @Pending
     public void whenIRunApplicationWithParameters(String parameters) {
         steps.runApplication(parameters);
     }
 
 
-   @Then("App notifies me that files are different")
-   @Pending
-   public void thenAppNotifiesMeThatFilesAreDifferent() {
-      steps.checkAppOutput("FAILED");
-   }
+    @Then("App notifies me that files are different")
+    public void thenAppNotifiesMeThatFilesAreDifferent() {
+      steps.checkAppOutput("NOK");
+    }
 
 }
