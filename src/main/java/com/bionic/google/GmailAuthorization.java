@@ -40,16 +40,6 @@ public class GmailAuthorization {
     private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
     private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
 
-    static {
-        try {
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-
     public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
         this.applicationName = applicationName;
         this.dataStoreDir = new java.io.File(getProperty("project.path"), "src/main/resources/credentials/gmail-api" + applicationName);

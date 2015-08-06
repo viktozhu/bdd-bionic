@@ -10,12 +10,26 @@ So that I can manage my emails properly and in short time
 
 Scenario: Verify that autoreply email is not sent in response to autoreply email
 Given authorized connection to gmail as 'bionic.bdd' user
-Given an email was sent by logged in user to 'bionic.bdd.test@gmail.com', with content '{
+And Auto-Responder application is running for 'bionic.bdd' user
+When an email was sent by logged in user to 'bionic.bdd.test@gmail.com', with content '{
                                                                                            "messageSubject": "Hello message",
                                                                                            "header": "Hi, ",
                                                                                            "body": "This is my first email",
                                                                                            "footer": "Best regards! "
                                                                                          }'
-When the second account sends autoreply email in response
-Then the first account gets autoreply email
-And doesn't send autoreply email in response
+Given authorized connection to gmail as 'bionic.bdd.test' user
+When 'bionic.bdd.test' user sends autoreply email in response
+Then 'bionic.bdd.test' user doesn't get autoreply email in response
+
+
+
+Scenario: Positive Scenario for Auto-Responder App
+Given authorized connection to gmail as 'bionic.bdd.test' user
+And Auto-Responder application is running for 'bionic.bdd' user
+When an email was sent by logged in user to 'bionic.bdd@gmail.com', with content '{
+                                                                                               "messageSubject": "Hello message",
+                                                                                               "header": "Hi, ",
+                                                                                               "body": "This is my first email",
+                                                                                               "footer": "Best regards! "
+                                                                                             }'
+Then 'bionic.bdd.test' user get autoreply email in response
