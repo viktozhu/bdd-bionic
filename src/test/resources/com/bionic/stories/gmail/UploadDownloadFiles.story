@@ -1,4 +1,5 @@
 Meta:
+@ignore
 
 Narrative:
 As a user
@@ -16,4 +17,4 @@ And Download time tool less than '20' seconds
 Examples:
 |filename|filesize|
 |textfile.txt|1MB|
-|presentation.pptx|200MB|
+|presentation.pptx|2MB|
