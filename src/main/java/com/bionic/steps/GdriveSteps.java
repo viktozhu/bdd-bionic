@@ -24,7 +24,7 @@ public class GdriveSteps extends ScenarioSteps{
 
     private Drive drive = null;
     private com.google.api.services.drive.model.File uploadedFile;
-    private String pathToDownloadedFile = "target\\temp.txt";
+    private String pathToDownloadedFile = "";
 
     //TODO: Put properFilename here
     private String pathToOriginalFile = null;
@@ -96,7 +96,7 @@ public class GdriveSteps extends ScenarioSteps{
 
     @Step
     public void runApplication(String parameters) {
-        String output = RunHelper.runJar("src\\test\\resources\\App.jar", parameters);
+        String output = RunHelper.runJar("target/bdd-bionic-1.0-SNAPSHOT-jar-with-dependencies.jar", parameters);
         Serenity.getCurrentSession().put("appOutput", output);
     }
 

@@ -31,7 +31,7 @@ public class DriveDownload {
         }
     }
 
-    public void saveFileToHDD(InputStream stream, String pathWithFileNameToSave) {
+    public void saveFileToHDD(InputStream stream, String pathWithFileNameToSave) {//pathWithFileNameToSave - target/testTxt.txt
         InputStream inputStream = null;
         OutputStream outputStream = null;
 

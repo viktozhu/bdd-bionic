@@ -11,24 +11,6 @@ public class GdriveDefinitions {
     @Steps
     GdriveSteps steps;
 
-    /** Overwritten by my merge forever :-)  
-    @Given("authorized connection to Gdrive")
-    public void givenAuthorizedConnectionToGdrive2() throws IOException {
-        PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
-
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
-
-        DriveUpload driveUpload = new DriveUpload();
-        driveUpload.insertFile
-                (service,"BDD","test","test","/src/test/resources/testData/testGif.gif");
-    } **/
-
     @Given("authorized connection to Gdrive")
     public void givenAuthorizedConnectionToGdrive() {
         steps.authorizeToGdrive();
@@ -39,7 +21,7 @@ public class GdriveDefinitions {
     public void whenIUploadfilenameToGDriveWithfilesize(@Named("filename") String filename,
                                                         @Named("filesize") String filesize ) {
         steps.createTestFile(filename, Integer.valueOf(filesize.substring(0, filesize.indexOf('M'))));
-        steps.uploadFile("target\\" + filename);
+        steps.uploadFile("target/" + filename);
     }
 
     @When("I download <filename> from GDrive")

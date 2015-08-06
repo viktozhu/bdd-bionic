@@ -33,7 +33,7 @@ public class GdriveApp {
         PropertyLoader.loadPropertys();
         GmailAuthorization gmailAuthorization = null;
         try {
-            String secretPath = DriveUpload.getFilePath("/src/main/resources/secrets/bionic.bdd.secret.json");
+            String secretPath = DriveUpload.getFilePath("src/main/resources/secrets/bionic.bdd.secret.json");
             gmailAuthorization =
                     new GmailAuthorization("bdd-project", secretPath);
 
