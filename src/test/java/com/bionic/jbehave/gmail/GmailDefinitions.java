@@ -15,6 +15,7 @@ import org.jbehave.core.annotations.When;
 import org.junit.Assert;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -25,9 +26,6 @@ import static org.junit.Assert.assertTrue;
 public class GmailDefinitions {
     @Steps
     GmailSteps steps;
-
-    private static final String account1 = "bionic.bdd@gmail.com";
-    private static final String account2 = "bionic.bdd.test@gmail.com";
 
     @Given("authorized connection to gmail as '$user' user")
     public void authorizedConnection(String guser) {
@@ -41,51 +39,18 @@ public class GmailDefinitions {
         Serenity.getCurrentSession().put("service", service);
     }
 
-    @When("user I get list of emails")
+    @Given("Auto-Responder application is running for '$user' user")
     @Pending
-    public void getEmailList(){
+    public void runAutoResponder(String user) {
 
     }
 
-    @Then("no new emails recevied")
-    @Pending
-    public void shouldNotBeNewEmails(){
-
-    }
-
-    @When("user receives a new email")
-    @Pending
-    public void whenUserReceivesANewEmail(String to, String content) {
-        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        //steps.sendEmail(service, to, content);
-    }
-
-    @When("Test user sends email to '$user' user")
-    public void whenTestUserSendsEmailTobionicbddUser(String user) {
-
-        File jsonEmail = new File("/");
-        Gson json = new Gson();
-        json.toJson("src/main/resources/auto-reply.json");
-        steps.sendEmail((Gmail) Serenity.getCurrentSession().get("service"),account1,json);
-    }
-
-    @Then("Test user receives autoreply")
-    @Pending
-    public void thenTestUesrReceivesAutoreply() {
-        // PENDING
-    }
-
-    @Then("doesn't send autoreply email in response")
-    public void thenDoesntSendAutoreplyEmailInResponse() {
-        steps.executeAutoResponderOn(account1);
-        assertFalse(steps.shouldReceiveAutoReply(account2, account1));
-    }
-
-    @Given("an email was sent by logged in user to '$emailTo', with content '$content'")
-    @Pending
+    @When("an email was sent by logged in user to '$emailTo', with content '$content'")
     public void givenAnEmailWasSentFromFirstGoogleAccount(String emailTo, String content) {
         Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        //steps.sendEmail(service, emailTo, content);
+        Gson json = new Gson();
+        json.toJson(content);
+        steps.sendEmail(service,emailTo,json);
     }
 
     @When("the second account sends autoreply email in response")
@@ -94,11 +59,28 @@ public class GmailDefinitions {
         steps.executeAutoResponder(service, "to");
     }
 
-    @Then("the first account gets autoreply email")
-    public void thenTheFirstAccountGetAutoreplyEmail() {
-
+    @Then("'$user' user get autoreply email in response from '$emailFrom'")
+    public void thenTheFirstAccountGetAutoreplyEmail(String user, String emailFrom) throws IOException {
         Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        assertTrue(steps.isAutoReplyReceived(service, "from"));
+        String userID = user + "@gmail.com";
+        assertTrue(steps.isAutoReplyReceived(service, userID, emailFrom));
+    }
+
+    @Then("'$user' user doesn't get autoreply email in response from '$emailFrom'")
+    public void thenDoesntSendAutoreplyEmailInResponse(String user, String emailFrom) throws IOException {
+        Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
+        String userID = user + "@gmail.com";
+        assertFalse(steps.isAutoReplyReceived(service,userID, emailFrom));
+    }
+
+    @When("user I get list of emails")
+    @Pending
+    public void getEmailList(){
+    }
+
+    @Then("no new emails recevied")
+    @Pending
+    public void shouldNotBeNewEmails(){
     }
 
 }

@@ -20,27 +20,6 @@ import java.util.List;
  */
 public class GmailSteps extends ScenarioSteps {
 
-    @Step
-    public void executeAutoResponderOn(String email) {
-        //Execute AutoResponder on accounts.get(email);
-    }
-
-    @Step
-    public boolean shouldReceiveAutoReply(String account, String from) {
-        /* Thread.sleep(7000);
-        String query = "from:"+from+" subject:autoPeply is:unread";
-        EmailGetter emailGetter = new EmailGetter(accounts.get(account));
-        return (emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).size() > 0;
-        //assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).isNotEmpty();
-        */
-        return true;
-    }
-
-    private void sendEmailWith(Gmail account, String from, String to, String subject, String text) {
-        /*EmailSender emailSender = new EmailSender(account, from);
-        emailSender.sendMessage(emailSender.createEmail(to, subject, text));
-            */
-    }
 
     @Step
     public Gmail authorize(String applicationName, String pathToClientSecret) {
@@ -72,19 +51,23 @@ public class GmailSteps extends ScenarioSteps {
         }
     }
 
+    @Step
     public void executeAutoResponder(Gmail service, String to){
         EmailSender sender = new EmailSender(service);
         sender.sendAutoReplyMessage(to);
     }
 
-    public boolean isAutoReplyReceived(Gmail service, String from) {
-        EmailGetter receiver = new EmailGetter(service);
-        List<Message> receivedMessages = receiver.getUnreadMessages();
-        return receivedMessages.stream().anyMatch(m -> isAutoReply(m));
+    @Step
+    public boolean isAutoReplyReceived(Gmail service, String userID, String from) throws IOException {
+        EmailGetter getter = new EmailGetter(service);
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String query = "from:"+from+" subject:I am currently out of the office. is:unread";
+        return(getter.listMessagesMatchingQuery(service, userID, query)).size() > 0;
     }
 
-    private boolean isAutoReply(Message message){
-        // TODO: implement check logic
-        return true;
-    }
+
 }
