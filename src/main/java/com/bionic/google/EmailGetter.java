@@ -30,14 +30,23 @@ public class EmailGetter {
      * @return Message Retrieved Message.
      * @throws IOException
      */
-    private Message getMessage(Gmail service, String userId, String messageId)
+    public Message getMessage(Gmail service, String userId, String messageId)
             throws IOException {
         Message message = service.users().messages().get(userId, messageId).execute();
 
         //Getting a snippet just for the testing purpose
-        System.out.println("Message snippet: " + message.getSnippet());
+        //System.out.println("Message snippet: " + message.getSnippet());
 
         return message;
+    }
+
+    public Message lastMessage() throws IOException {
+        ListMessagesResponse response = service.users().messages().list("me").setMaxResults(1L).execute();
+        List<Message> messages = response.getMessages();
+        if (messages == null || messages.isEmpty()) {
+            return null;
+        }
+        return messages.get(0);
     }
 
     /**
@@ -65,9 +74,9 @@ public class EmailGetter {
             }
         }
 
-        for (Message message : messages) {
+        /*for (Message message : messages) {
             System.out.println(message.toPrettyString());
-        }
+        }*/
 
         return messages;
     }
@@ -95,9 +104,9 @@ public class EmailGetter {
             }
         }
 
-        for (Thread thread : threads) {
+        /*for (Thread thread : threads) {
             System.out.println(thread.toPrettyString());
-        }
+        }*/
 
         return threads;
     }

@@ -63,18 +63,18 @@ public class GmailSteps extends ScenarioSteps {
     @Step
     public void sendEmail(Gmail service, String mailTo, Gson json) {
         EmailSender sender = new EmailSender(service);
-        try {
+        /*try {
             sender.sendMessage(mailTo, json);
         } catch (MessagingException e) {
             Assert.fail("Message sending error: " + e.toString());
         } catch (IOException e) {
             Assert.fail("Message sending error: " + e.toString());
-        }
+        }*/
     }
 
     public void executeAutoResponder(Gmail service, String to){
         EmailSender sender = new EmailSender(service);
-        sender.sendAutoReplyMessage(to);
+       // sender.sendAutoReplyMessage(to);
     }
 
     public boolean isAutoReplyReceived(Gmail service, String from) {
