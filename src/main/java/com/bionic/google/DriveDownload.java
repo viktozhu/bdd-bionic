@@ -31,7 +31,7 @@ public class DriveDownload {
         }
     }
 
-    public void saveFileToHDD(InputStream stream, String pathWithFileNameToSave) {
+    public void saveFileToHDD(InputStream stream, String pathWithFileNameToSave) {//pathWithFileNameToSave - target/testTxt.txt
         InputStream inputStream = null;
         OutputStream outputStream = null;
 
@@ -50,7 +50,7 @@ public class DriveDownload {
                 outputStream.write(bytes, 0, read);
             }
 
-            System.out.println("Done!");
+            System.out.println("OK");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -69,10 +69,8 @@ public class DriveDownload {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
             }
         }
     }
-
 }
 

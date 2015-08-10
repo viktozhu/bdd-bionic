@@ -24,7 +24,7 @@ public class GdriveSteps extends ScenarioSteps{
 
     private Drive drive = null;
     private com.google.api.services.drive.model.File uploadedFile;
-    private String pathToDownloadedFile = "target/temp.txt";
+    private String pathToDownloadedFile = "";
 
     //TODO: Put properFilename here
     private String pathToOriginalFile = null;
@@ -50,14 +50,10 @@ public class GdriveSteps extends ScenarioSteps{
         this.pathToDownloadedFile = new StringBuilder(filename).insert(filename.indexOf('.'),
                                                                        new char[]{'D', 'o', 'w', 'n'}).toString();
         DriveUpload driveUpload = new DriveUpload();
-        try {
-            Instant start = Instant.now();
-            uploadedFile = driveUpload.insertFile(drive, "BDD", "This is uploaded test file!", "test", filename);
-            Instant end = Instant.now();
-            Serenity.getCurrentSession().put("uploadTime", Duration.between(start, end).getSeconds());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Instant start = Instant.now();
+        uploadedFile = driveUpload.insertFileInFolder(drive, "BDD", "This is uploaded test file!", "test", filename);
+        Instant end = Instant.now();
+        Serenity.getCurrentSession().put("uploadTime", Duration.between(start, end).getSeconds());
     }
 
     @Step
@@ -84,7 +80,7 @@ public class GdriveSteps extends ScenarioSteps{
     }
 
     @Step
-    public void downloadTimeShouldTakeLessThan(int expectedSeconds) {
+    public void downloadTimeShouldTakeLessThan(int expectedSeconds) { 
         long actual = (long)Serenity.getCurrentSession().get("downloadTime");
         Assert.assertTrue("Download Time took more than " + expectedSeconds, actual < expectedSeconds);
     }
@@ -96,7 +92,7 @@ public class GdriveSteps extends ScenarioSteps{
 
     @Step
     public void runApplication(String parameters) {
-        String output = RunHelper.runJar("src/test/resources/App.jar", parameters);
+        String output = RunHelper.runJar("target/bdd-bionic-1.0-SNAPSHOT-jar-with-dependencies.jar", parameters);
         Serenity.getCurrentSession().put("appOutput", output);
     }
 
