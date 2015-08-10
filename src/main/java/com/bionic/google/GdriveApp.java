@@ -11,9 +11,6 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 
-/**
- * Created by 1 on 05.08.2015.
- */
 public class GdriveApp {
 
     public static File fileUpload(Drive service,String folderName, String title, String desc,String filePath) throws IOException {
@@ -46,7 +43,7 @@ public class GdriveApp {
             File file = fileUpload(service,"BDD",filePathParts[filePathParts.length - 1],"test desc",args[1]);
             DriveDownload driveDownload = new DriveDownload();
             InputStream stream = driveDownload.downloadFile(service, file);
-            driveDownload.saveFileToHDD(stream, DriveUpload.getFilePath(args[2]));
+            driveDownload.saveFileToHDD(stream, args[2]);
         }
         else if (args[0].equals("-verify")) {
             String file1 = FileHelper
