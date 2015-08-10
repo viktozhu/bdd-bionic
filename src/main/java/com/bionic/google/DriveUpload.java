@@ -18,13 +18,6 @@ import java.util.Arrays;
  */
 public class DriveUpload {
 
-//    public static String getFilePath(String fileAddr) {
-//        fileAddr = PropertyLoader.loadProperty("project.path")+ "/" + fileAddr;
-//        java.io.File file = new java.io.File(fileAddr);
-//        String absolutePath = file.getAbsolutePath();
-//        return absolutePath;
-//    }
-
     public static String getFilePath(String fileAddr) {
         String [] props ={PropertyLoader.loadProperty("project.path")+ "/" + fileAddr,
                 System.getProperty("user.dir")+ "/" + fileAddr};
