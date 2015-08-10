@@ -5,6 +5,7 @@ import com.bionic.utils.PropertyLoader;
 import com.google.api.services.drive.Drive;
 import com.google.api.services.drive.model.File;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -15,19 +16,11 @@ import java.time.Instant;
  */
 public class GdriveApp {
 
-    public static File fileUpload(Drive service,String folderName, String title, String desc,String filePath){
-        File file = null;
-        try {
-            DriveUpload driveUpload = new DriveUpload();
-            file = driveUpload.insertFileInFolder
-                    (service, folderName, title, desc, filePath);
-            System.out.println("OK");
-        } catch (Exception e) {
-            System.out.println("NOK");
-            System.exit(1);
-        }
-        return file;
+    public static File fileUpload(Drive service,String folderName, String title, String desc,String filePath) throws IOException {
+        DriveUpload driveUpload = new DriveUpload();
+        return driveUpload.insertFileInFolder(service, folderName, title, desc, filePath);
     }
+
     public static void main(String[] args) throws IOException {
 
         PropertyLoader.loadPropertys();

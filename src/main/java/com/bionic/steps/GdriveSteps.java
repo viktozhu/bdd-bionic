@@ -50,14 +50,10 @@ public class GdriveSteps extends ScenarioSteps{
         this.pathToDownloadedFile = new StringBuilder(filename).insert(filename.indexOf('.'),
                                                                        new char[]{'D', 'o', 'w', 'n'}).toString();
         DriveUpload driveUpload = new DriveUpload();
-        try {
-            Instant start = Instant.now();
-            uploadedFile = driveUpload.insertFileInFolder(drive, "BDD", "This is uploaded test file!", "test", filename);
-            Instant end = Instant.now();
-            Serenity.getCurrentSession().put("uploadTime", Duration.between(start, end).getSeconds());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Instant start = Instant.now();
+        uploadedFile = driveUpload.insertFileInFolder(drive, "BDD", "This is uploaded test file!", "test", filename);
+        Instant end = Instant.now();
+        Serenity.getCurrentSession().put("uploadTime", Duration.between(start, end).getSeconds());
     }
 
     @Step

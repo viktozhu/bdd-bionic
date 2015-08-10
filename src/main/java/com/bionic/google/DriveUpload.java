@@ -18,11 +18,30 @@ import java.util.Arrays;
  */
 public class DriveUpload {
 
+//    public static String getFilePath(String fileAddr) {
+//        fileAddr = PropertyLoader.loadProperty("project.path")+ "/" + fileAddr;
+//        java.io.File file = new java.io.File(fileAddr);
+//        String absolutePath = file.getAbsolutePath();
+//        return absolutePath;
+//    }
+
     public static String getFilePath(String fileAddr) {
-        fileAddr = PropertyLoader.loadProperty("project.path")+ "/" + fileAddr;
-        java.io.File file = new java.io.File(fileAddr);
-        String absolutePath = file.getAbsolutePath();
-        return absolutePath;
+        String [] props ={PropertyLoader.loadProperty("project.path")+ "/" + fileAddr,
+                System.getProperty("user.dir")+ "/" + fileAddr};
+        java.io.File file = null;
+
+        for(int i = 0; i<props.length;i++){
+            file = new java.io.File(props[i]);
+            if(file.exists()){
+                String absolutePath = file.getAbsolutePath();
+                return absolutePath;
+            }
+            else if(new java.io.File(fileAddr).exists()){
+                String absolutePath = new java.io.File(fileAddr).getAbsolutePath();
+                return absolutePath;
+            }
+        }
+        return "";
     }
 
     public static String getMimeType(String filePath){
@@ -54,7 +73,7 @@ public class DriveUpload {
         }
     }
 
-    public File insertFileInFolder(Drive service, String folderName, String title, String description, String filename) throws IOException {
+    public File insertFileInFolder(Drive service, String folderName, String title, String description, String filename){
         // File's metadata.
         String mimeType = getMimeType(getFilePath(filename));
         File body = new File();
@@ -64,7 +83,12 @@ public class DriveUpload {
 
         // Set the parent folder.
 
-        String parentId = createPublicFolder(service,folderName).getId();
+        String parentId = null;
+        try {
+            parentId = createPublicFolder(service,folderName).getId();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (parentId != null && parentId.length() > 0) {
             body.setParents(
@@ -77,9 +101,11 @@ public class DriveUpload {
         try {
             File file = service.files().insert(body, mediaContent).execute();
             System.out.println("File ID: " + file.getId());
+            System.out.println("OK");
             return file;
         } catch (IOException e) {
-            System.out.println("An error occured: " + e);
+            System.out.println("NOK");
+            System.exit(1);
             return null;
         }
     }
