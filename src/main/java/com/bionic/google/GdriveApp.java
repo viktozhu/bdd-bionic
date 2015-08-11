@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
+import java.util.Scanner;
 
 public class GdriveApp {
 
@@ -41,9 +42,13 @@ public class GdriveApp {
             System.out.println
                     ("Prerequisite: file \"" + filePathParts[filePathParts.length - 1] + "\" should be uploaded");
             File file = fileUpload(service,"BDD",filePathParts[filePathParts.length - 1],"test desc",args[1]);
+
             DriveDownload driveDownload = new DriveDownload();
+
+            System.out.println("Enter FULL file path with file name");
+            Scanner sc = new Scanner(System.in);
             InputStream stream = driveDownload.downloadFile(service, file);
-            driveDownload.saveFileToHDD(stream, args[2]);
+            driveDownload.saveFileToHDD(stream,  sc.nextLine());
         }
         else if (args[0].equals("-verify")) {
             String file1 = FileHelper
