@@ -1,8 +1,5 @@
 package com.bionic.google;
 
-import com.bionic.google.EmailSender;
-import com.bionic.google.GmailAuthorization;
-import com.bionic.google.EmailGetter;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 
@@ -17,20 +14,16 @@ public class GmailApp {
 
     public static void main(String[] args) throws MessagingException, IOException, InterruptedException {
         GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
         Gmail gmail = null;
         try {
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
             gmail = gmailAuthorization.getGmailService();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | GeneralSecurityException e) {
+            System.out.println("Error during Authorization " + e.toString());
+            System.exit(1);
         }
 
+        //Get internalDate of last message
         EmailGetter emailGetter = new EmailGetter(gmail);
         Long internalDateOfLast;
         Message lastMessage = emailGetter.lastMessage();
@@ -41,17 +34,18 @@ public class GmailApp {
         }
 
         HashSet<String> handledThreadId = new HashSet<>();
+        EmailSender emailSender = new EmailSender(gmail);
         long tStart = System.currentTimeMillis();
         long tEnd = tStart + THREE_MINUTES_IN_MILLISECONDS;
         while (System.currentTimeMillis() < tEnd) {
-            Thread.sleep(1000);
-            System.out.println(System.currentTimeMillis());
-            EmailSender emailSender = new EmailSender(gmail);
+            Thread.sleep(3000);
+            System.out.println(".");
             List<Message> unreadMessages = emailGetter.getUnreadMessages();
             for (Message message : unreadMessages) {
                 Message fullMessage = emailGetter.getMessage(gmail,"bionic.bdd@gmail.com", message.getId());
                 if (internalDateOfLast < fullMessage.getInternalDate() && !handledThreadId.contains(message.getThreadId())) {
                     Message replayMessage = emailSender.sendReplyTo(fullMessage, "Sorry, but I am currently out of the office.");
+                    System.out.println("Auto-reply has been sent");
                     handledThreadId.add(replayMessage.getThreadId());
                 }
             }
