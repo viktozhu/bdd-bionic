@@ -4,11 +4,13 @@ import com.bionic.google.EmailGetter;
 import com.bionic.google.EmailSender;
 import com.bionic.google.GmailAuthorization;
 import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 
@@ -32,21 +34,27 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     @Step
-    public void sendEmail(Gmail service, String mailTo, Gson json) {
+    public Message sendEmail(Gmail service, String mailTo, String json) {
         EmailSender sender = new EmailSender(service);
-        /*try {
-            sender.sendMessage(mailTo, json);
+        try
+        {
+            return sender.sendMessage(mailTo, json);
         } catch (MessagingException e) {
             Assert.fail("Message sending error: " + e.toString());
-        } catch (IOException e) {
-            Assert.fail("Message sending error: " + e.toString());
-        }*/
+            return null;
+        }
     }
 
     @Step
-    public void executeAutoResponder(Gmail service, String to) {
+    public void executeAutoResponder(Gmail service, Message message, String content) {
         EmailSender sender = new EmailSender(service);
-        // sender.sendAutoReplyMessage(to);
+        try {
+            sender.sendReplyTo(message, content);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Step
