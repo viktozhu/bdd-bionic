@@ -36,6 +36,7 @@ public class GmailAuthorization {
     private FileDataStoreFactory dataStoreFactory;
     private String pathToClientSecret;
     private HttpTransport httpTransport;
+    private String userID;
     private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
     private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
     private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
@@ -65,8 +66,9 @@ public class GmailAuthorization {
                         .setDataStoreFactory(dataStoreFactory)
                         .setAccessType("offline")
                         .build();
+        this.userID = clientSecrets.getInstalled().getClientId();
         Credential credential = new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver())
-                .authorize(clientSecrets.getInstalled().getClientId());
+                .authorize(this.userID);
         System.out.println("Credentials saved to " + dataStoreDir.getAbsolutePath());
         return credential;
     }
@@ -105,5 +107,9 @@ public class GmailAuthorization {
                 httpTransport, JSON_FACTORY, credential)
                 .setApplicationName(applicationName)
                 .build();
+    }
+
+    public String getUserID() {
+        return this.userID;
     }
 }

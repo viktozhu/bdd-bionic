@@ -203,18 +203,40 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>2.5.5</version>
-                <configuration>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.bionic.google.GdriveApp</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
                 <executions>
                     <execution>
+                        <id>build-gdrive</id>
+                            <configuration>
+                                <appendAssemblyId>false</appendAssemblyId>
+                                <archive>
+                                    <manifest>
+                                        <mainClass>com.bionic.google.GdriveApp</mainClass>
+                                    </manifest>
+                                </archive>
+                                <descriptorRefs>
+                                    <descriptorRef>jar-with-dependencies</descriptorRef>
+                                </descriptorRefs>
+                                <finalName>${project.artifactId}-gdriveApp</finalName>
+                            </configuration>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>build-gmail</id>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.bionic.google.GmailApp</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-gmailApp</finalName>
+                        </configuration>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -246,6 +268,33 @@
                                         <argument>-upload</argument>
                                         <argument>/src/test/resources/testData/testTxt.txt</argument>
                                     </arguments>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>google-autoreply-app</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                        <version>1.4.0</version>
+                        <executions>
+                            <execution>
+                                <phase>test</phase>
+                                <goals>
+                                    <goal>java</goal>
+                                </goals>
+                                <configuration>
+                                    <mainClass>com.bionic.google.GmailApp</mainClass>
+                                    <!--arguments>
+                                        <argument>-upload</argument>
+                                        <argument>/src/test/resources/testData/testTxt.txt</argument>
+                                    </arguments-->
                                 </configuration>
                             </execution>
                         </executions>

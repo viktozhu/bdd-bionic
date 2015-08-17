@@ -3,14 +3,16 @@ package com.bionic.google;
 import com.google.api.client.repackaged.org.apache.commons.codec.binary.Base64;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
-import com.google.gson.Gson;
+import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.gson.GsonBuilder;
+
 import java.io.*;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Properties;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.internet.*;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -18,181 +20,138 @@ import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
 import javax.mail.Multipart;
-import javax.mail.internet.MimeBodyPart;
-import javax.mail.internet.MimeMultipart;
 
 public class EmailSender {
-    private String pathToJsonWithAutoReply = "src\\main\\resources\\auto-reply.json";
-    private String userMailbox;
-    private Gmail service;
+    private static final String userMailbox = "me";
+    private static Gmail service;
 
     public EmailSender(Gmail service) {
         this.service = service;
-        this.userMailbox = "me";
     }
 
-    /**
-     * Create a MimeMessage using the parameters provided.
-     *
-     * @param to Email address of the receiver.
-     * @param subject Subject of the email.
-     * @param bodyText Body text of the email.
-     * @return MimeMessage to be used to send email.
-     * @throws MessagingException
-     */
-    public MimeMessage createEmail(String to, String subject,
-                                          String bodyText) throws MessagingException {
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props, null);
-
-        MimeMessage email = new MimeMessage(session);
-        email.setFrom(new InternetAddress(userMailbox));
-        email.addRecipient(javax.mail.Message.RecipientType.TO,
-                new InternetAddress(to));
-        email.setSubject(subject);
-        email.setText(bodyText);
-        return email;
+    public Message sendMessage(String emailTo, String json) throws MessagingException {
+        return sendMimeMessage(formatMimeMessage(emailTo, json));
     }
 
-    /**
-     * Create a MimeMessage using the parameters provided.
-     *
-     * @param to Email address of the receiver.
-     * @param subject Subject of the email.
-     * @param bodyText Body text of the email.
-     * @param fileDir Path to the directory containing attachment.
-     * @param filename Name of file to be attached.
-     * @return MimeMessage to be used to send email.
-     * @throws MessagingException
-     */
-    public MimeMessage createEmailWithAttachment(String to, String subject,
-                                                        String bodyText, String fileDir, String filename) throws MessagingException, IOException {
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props, null);
+    public Message sendMessage(String emailTo, String emailSubject, String emailBody) throws MessagingException {
+        return sendMimeMessage(formatMimeMessage(emailTo, emailSubject, emailBody));
+    }
 
-        MimeMessage email = new MimeMessage(session);
-        InternetAddress tAddress = new InternetAddress(to);
-        InternetAddress fAddress = new InternetAddress(userMailbox);
+    public Message sendMessage(String emailTo, File pathToJson) throws MessagingException, IOException {
+        Reader reader = new FileReader(pathToJson);
+        EmailContent emailContainerContent = new GsonBuilder().create().fromJson(reader, EmailContent.class);
+        return sendMimeMessage(formatMimeMessage(emailTo, emailContainerContent));
+    }
 
-        email.setFrom(fAddress);
-        email.addRecipient(javax.mail.Message.RecipientType.TO, tAddress);
-        email.setSubject(subject);
+    public Message sendReplyTo(Message message, String replayMessage) throws MessagingException, IOException {
+        Message fullMessage = new EmailGetter(service).getMessage(service, "me", message.getId());
+        List<MessagePartHeader> headersList = fullMessage.getPayload().getHeaders();
+        HashMap <String, String> headersMap = new HashMap<>();
+        for (MessagePartHeader part: headersList) {
+            headersMap.put(part.getName(), part.getValue());
+        }
+        String messageSubject = headersMap.get("Subject");
+        String emailTo = headersMap.get("From");;
+        String messageId = headersMap.get("Message-ID");
+        String references = headersMap.get("References");
+        references = references + " " + messageId;
+        String threadId = fullMessage.getThreadId();
+        return sendMimeMessage(threadId, formatMimeMessage(emailTo, messageSubject, replayMessage, messageId, references));
+    }
 
+    public Message createEmailWithAttachment(String to, String jsonString, String fileDir, String filename) throws MessagingException, IOException {
+        MimeMessage email = formatMimeMessage(to, jsonString);
         MimeBodyPart mimeBodyPart = new MimeBodyPart();
-        mimeBodyPart.setContent(bodyText, "text/plain");
+        // mimeBodyPart.setContent(bodyText, "text/plain");
         mimeBodyPart.setHeader("Content-Type", "text/plain; charset=\"UTF-8\"");
-
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(mimeBodyPart);
-
         mimeBodyPart = new MimeBodyPart();
         DataSource source = new FileDataSource(fileDir + filename);
-
         mimeBodyPart.setDataHandler(new DataHandler(source));
         mimeBodyPart.setFileName(filename);
         String contentType = Files.probeContentType(FileSystems.getDefault()
                 .getPath(fileDir, filename));
         mimeBodyPart.setHeader("Content-Type", contentType + "; name=\"" + filename + "\"");
         mimeBodyPart.setHeader("Content-Transfer-Encoding", "base64");
-
         multipart.addBodyPart(mimeBodyPart);
-
         email.setContent(multipart);
-
-        return email;
+        return sendMimeMessage(email);
     }
 
-    /**
-     * Create a MimeMessage of the auto-reply.
-     *
-     * @param to Email address of the receiver.
-     */
-    private MimeMessage createAutoReplyEmail(String to) throws MessagingException, IOException {
-        Reader reader = null;
-        try {
-            reader = new FileReader(pathToJsonWithAutoReply);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        EmailContent emailContainerContent = new GsonBuilder().create().fromJson(reader, EmailContent.class);
+    private MimeMessage formatMimeMessage(String emailTo, String json) throws MessagingException {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        MimeMessage email = new MimeMessage(session);
+        email.setFrom(new InternetAddress(userMailbox));
+        email.addRecipient(javax.mail.Message.RecipientType.TO,
+                new InternetAddress(emailTo));
+        EmailContent emailContainerContent = new GsonBuilder().create().fromJson(json, EmailContent.class);
         String bodyText = emailContainerContent.getHeader() + ",\n"
                 + emailContainerContent.getBody() + "\n"
                 + emailContainerContent.getFooter();
-        MimeMessage email = createEmail(to, emailContainerContent.getMessageSubject(), bodyText);
+        email.setSubject(emailContainerContent.getMessageSubject());
+        email.setText(bodyText);
         return email;
     }
 
-    /**
-     * Create a Message from an email
-     *
-     * @param email Email to be set to raw of message
-     * @return Message containing base64url encoded email.
-     * @throws IOException
-     * @throws MessagingException
-     */
-    public Message createMessageWithEmail(MimeMessage email)
-            throws MessagingException, IOException {
+    private MimeMessage formatMimeMessage(String emailTo, EmailContent emailContainerContent) throws MessagingException {
+        String bodyText = emailContainerContent.getHeader() + ",\n"
+                + emailContainerContent.getBody() + "\n"
+                + emailContainerContent.getFooter();
+        return formatMimeMessage(emailTo, emailContainerContent.getMessageSubject(), bodyText);
+    }
+
+    private MimeMessage formatMimeMessage(String emailTo, String messageSubject, String bodyText) throws MessagingException {
+        Properties props = new Properties();
+        Session session = Session.getDefaultInstance(props, null);
+        MimeMessage email = new MimeMessage(session);
+        email.setFrom(new InternetAddress(userMailbox));
+        email.addRecipient(javax.mail.Message.RecipientType.TO,
+                new InternetAddress(emailTo));
+        email.setSubject(messageSubject);
+        email.setText(bodyText);
+        return email;
+    }
+
+    private MimeMessage formatMimeMessage(String emailTo, String messageSubject, String bodyText, String replyTo, String references) throws MessagingException {
+        MimeMessage email = formatMimeMessage(emailTo, messageSubject, bodyText);
+        email.setHeader("In-Reply-To", replyTo);
+        email.setHeader("References", references);
+        return email;
+    }
+
+    private Message sendMimeMessage(MimeMessage email) throws MessagingException {
+        Message message = convertMimeMessageToMessage(email);
+        try {
+            message = service.users().messages().send(userMailbox, message).execute();
+        } catch (IOException e) {
+            throw new MessagingException("Cannot send message", e);
+        }
+        return message;
+    }
+
+    private Message sendMimeMessage(String threadId, MimeMessage email) throws MessagingException {
+        Message message = convertMimeMessageToMessage(email);
+        message.setThreadId(threadId);
+        try {
+            message = service.users().messages().send(userMailbox, message).execute();
+        } catch (IOException e) {
+            throw new MessagingException("Cannot send message", e);
+        }
+        return message;
+    }
+
+    private Message convertMimeMessageToMessage(MimeMessage email) throws MessagingException {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        email.writeTo(bytes);
+        try {
+            email.writeTo(bytes);
+        } catch (IOException e) {
+            throw new MessagingException("Cannot write to stream", e);
+        }
         String encodedEmail = Base64.encodeBase64URLSafeString(bytes.toByteArray());
         Message message = new Message();
         message.setRaw(encodedEmail);
         return message;
-    }
-
-    /**
-     * Send an email from the user's mailbox to its recipient.
-     *
-     * @param email Email to be sent.
-     * @throws MessagingException
-     * @throws IOException
-     */
-    public void sendMessage(MimeMessage email)
-            throws MessagingException, IOException {
-        Message message = createMessageWithEmail(email);
-        message = service.users().messages().send(userMailbox, message).execute();
-        // System.out.println("Message id: " + message.getId());
-        //System.out.println(message.toPrettyString());
-    }
-
-
-    public void sendMessage(String emailTo, Gson json) throws MessagingException, IOException {
-        Properties props = new Properties();
-        Session session = Session.getDefaultInstance(props, null);
-
-        MimeMessage email = new MimeMessage(session);
-
-        email.setFrom(new InternetAddress(userMailbox));
-        email.addRecipient(javax.mail.Message.RecipientType.TO,
-                new InternetAddress(emailTo));
-        EmailContent emailContainerContent = new GsonBuilder().create().fromJson(json.toString(), EmailContent.class);
-        String bodyText = emailContainerContent.getHeader() + ",\n"
-                + emailContainerContent.getBody() + "\n"
-                + emailContainerContent.getFooter();
-        email.setSubject("FIXME"); //FIXME: get from JSON
-        email.setText(bodyText);
-
-        sendMessage(email);
-    }
-
-    /**
-     * Send an email with auto-reply from the user's mailbox to its recipient.
-     *
-     * @param to Email address of the receiver.
-     */
-    public void sendAutoReplyMessage(String to) {
-        Message message = null;
-        try {
-            message = createMessageWithEmail(createAutoReplyEmail(to));
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try {
-            message = service.users().messages().send(userMailbox, message).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
