@@ -3,6 +3,7 @@ package com.bionic.jbehave.gmail;
 import com.bionic.steps.GmailSteps;
 import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
+import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
 import net.serenitybdd.core.Serenity;
 import net.thucydides.core.annotations.Pending;
@@ -39,18 +40,18 @@ public class GmailDefinitions {
 
     }
 
+    Message message = null;
+
     @When("an email was sent by logged in user to '$emailTo', with content '$content'")
     public void givenAnEmailWasSentFromFirstGoogleAccount(String emailTo, String content) {
         Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        Gson json = new Gson();
-        json.toJson(content);
-        steps.sendEmail(service, emailTo, json);
+        message = steps.sendEmail(service, emailTo, content);
     }
 
     @When("the second account sends autoreply email in response")
     public void whenTheSecondAccountSendsAutoreplyEmailInResponse() {
         Gmail service = (Gmail) Serenity.getCurrentSession().get("service");
-        steps.executeAutoResponder(service, "to");
+        steps.executeAutoResponder(service, message,"Sorry, I'm out of office");
     }
 
     @Then("'$user' user get autoreply email in response from '$emailFrom'")
