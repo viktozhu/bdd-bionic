@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.bionic</groupId>
@@ -206,18 +206,18 @@
                 <executions>
                     <execution>
                         <id>build-gdrive</id>
-                            <configuration>
-                                <appendAssemblyId>false</appendAssemblyId>
-                                <archive>
-                                    <manifest>
-                                        <mainClass>com.bionic.google.GdriveApp</mainClass>
-                                    </manifest>
-                                </archive>
-                                <descriptorRefs>
-                                    <descriptorRef>jar-with-dependencies</descriptorRef>
-                                </descriptorRefs>
-                                <finalName>${project.artifactId}-gdriveApp</finalName>
-                            </configuration>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <archive>
+                                <manifest>
+                                    <mainClass>com.bionic.google.GdriveApp</mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>jar-with-dependencies</descriptorRef>
+                            </descriptorRefs>
+                            <finalName>${project.artifactId}-gdriveApp</finalName>
+                        </configuration>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -266,7 +266,7 @@
                                     <mainClass>com.bionic.google.GdriveApp</mainClass>
                                     <arguments>
                                         <argument>-upload</argument>
-                                        <argument>/src/test/resources/testData/testTxt.txt</argument>
+                                        <argument>/src/test/resources/testdata/testTxt.txt</argument>
                                     </arguments>
                                 </configuration>
                             </execution>
@@ -293,7 +293,7 @@
                                     <mainClass>com.bionic.google.GmailApp</mainClass>
                                     <!--arguments>
                                         <argument>-upload</argument>
-                                        <argument>/src/test/resources/testData/testTxt.txt</argument>
+                                        <argument>/src/test/resources/testdata/testTxt.txt</argument>
                                     </arguments-->
                                 </configuration>
                             </execution>

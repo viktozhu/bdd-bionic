@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 
 public class GmailApp {
-    public static final int THREE_MINUTES_IN_MILLISECONDS = 3*60*1000;
+    public static final int THREE_MINUTES_IN_MILLISECONDS = 3 * 60 * 1000;
 
     public static void main(String[] args) throws MessagingException, IOException, InterruptedException {
         GmailAuthorization gmailAuthorization = null;
@@ -27,10 +27,10 @@ public class GmailApp {
         EmailGetter emailGetter = new EmailGetter(gmail);
         Long internalDateOfLast;
         Message lastMessage = emailGetter.lastMessage();
-        if( lastMessage == null) {
+        if (lastMessage == null) {
             internalDateOfLast = 0L;
         } else {
-            internalDateOfLast = emailGetter.getMessage(gmail,"bionic.bdd@gmail.com", lastMessage.getId()).getInternalDate();
+            internalDateOfLast = emailGetter.getMessage(gmail, "bionic.bdd@gmail.com", lastMessage.getId()).getInternalDate();
         }
 
         HashSet<String> handledThreadId = new HashSet<>();
@@ -42,7 +42,7 @@ public class GmailApp {
             System.out.println(".");
             List<Message> unreadMessages = emailGetter.getUnreadMessages();
             for (Message message : unreadMessages) {
-                Message fullMessage = emailGetter.getMessage(gmail,"bionic.bdd@gmail.com", message.getId());
+                Message fullMessage = emailGetter.getMessage(gmail, "bionic.bdd@gmail.com", message.getId());
                 if (internalDateOfLast < fullMessage.getInternalDate() && !handledThreadId.contains(message.getThreadId())) {
                     Message replayMessage = emailSender.sendReplyTo(fullMessage, "Sorry, but I am currently out of the office.");
                     System.out.println("Auto-reply has been sent");

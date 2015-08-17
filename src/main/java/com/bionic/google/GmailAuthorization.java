@@ -31,15 +31,15 @@ import static com.bionic.utils.PropertyLoader.getProperty;
  */
 public class GmailAuthorization {
 
+    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
+    private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
+    private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
     private String applicationName;
     private java.io.File dataStoreDir;
     private FileDataStoreFactory dataStoreFactory;
     private String pathToClientSecret;
     private HttpTransport httpTransport;
     private String userID;
-    private static final JsonFactory JSON_FACTORY = JacksonFactory.getDefaultInstance();
-    private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
-    private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
 
     public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
         this.applicationName = applicationName;

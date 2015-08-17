@@ -16,7 +16,7 @@ public class DriveDownloadTest {
 
     @Before
     public void prepareData() throws FileNotFoundException {
-        File actualFile = new File("src/test/resources/testData/testGif.gif");
+        File actualFile = new File("src/test/resources/testdata/testGif.gif");
         fileToStream = new FileInputStream(actualFile);
     }
 

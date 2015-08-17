@@ -20,7 +20,7 @@ import java.time.Instant;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.MatcherAssert.assertThat;
 
-public class GdriveSteps extends ScenarioSteps{
+public class GdriveSteps extends ScenarioSteps {
 
     private Drive drive = null;
     private com.google.api.services.drive.model.File uploadedFile;
@@ -33,7 +33,7 @@ public class GdriveSteps extends ScenarioSteps{
     public void authorizeToGdrive() {
         GmailAuthorization gmailAuthorization = null;
         try {
-            gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.secret.json");
+            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
@@ -48,7 +48,7 @@ public class GdriveSteps extends ScenarioSteps{
     public void uploadFile(String filename) {
         this.pathToOriginalFile = filename;
         this.pathToDownloadedFile = new StringBuilder(filename).insert(filename.indexOf('.'),
-                                                                       new char[]{'D', 'o', 'w', 'n'}).toString();
+                new char[]{'D', 'o', 'w', 'n'}).toString();
         DriveUpload driveUpload = new DriveUpload();
         try {
             Instant start = Instant.now();
@@ -74,7 +74,7 @@ public class GdriveSteps extends ScenarioSteps{
     public void filesShouldBeEqual() {
         String originalFileMD5HashSum = FileHelper.getFileHashSum(pathToOriginalFile);
         String downloadedFileMD5HashSum = FileHelper.getFileHashSum(pathToDownloadedFile);
-        Assert.assertTrue( originalFileMD5HashSum.equals(downloadedFileMD5HashSum));
+        Assert.assertTrue(originalFileMD5HashSum.equals(downloadedFileMD5HashSum));
     }
 
     @Step
@@ -84,8 +84,8 @@ public class GdriveSteps extends ScenarioSteps{
     }
 
     @Step
-    public void downloadTimeShouldTakeLessThan(int expectedSeconds) { 
-        long actual = (long)Serenity.getCurrentSession().get("downloadTime");
+    public void downloadTimeShouldTakeLessThan(int expectedSeconds) {
+        long actual = (long) Serenity.getCurrentSession().get("downloadTime");
         Assert.assertTrue("Download Time took more than " + expectedSeconds, actual < expectedSeconds);
     }
 

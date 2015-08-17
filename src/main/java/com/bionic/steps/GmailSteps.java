@@ -4,20 +4,14 @@ import com.bionic.google.EmailGetter;
 import com.bionic.google.EmailSender;
 import com.bionic.google.GmailAuthorization;
 import com.google.api.services.gmail.Gmail;
-import com.google.api.services.gmail.model.Message;
 import com.google.gson.Gson;
 import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 
-import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
-/**
- * Created by viktozhu on 7/27/15.
- */
 public class GmailSteps extends ScenarioSteps {
 
 
@@ -30,10 +24,8 @@ public class GmailSteps extends ScenarioSteps {
             Gmail service = gmailAuthorization.getGmailService();
             return service;
 
-        } catch (GeneralSecurityException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
-        } catch (IOException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
+        } catch (GeneralSecurityException | IOException e) {
+            Assert.fail("Incorrect SECRET KEY:" + e.toString());
         }
 
         return null;
@@ -52,9 +44,9 @@ public class GmailSteps extends ScenarioSteps {
     }
 
     @Step
-    public void executeAutoResponder(Gmail service, String to){
+    public void executeAutoResponder(Gmail service, String to) {
         EmailSender sender = new EmailSender(service);
-       // sender.sendAutoReplyMessage(to);
+        // sender.sendAutoReplyMessage(to);
     }
 
     @Step
@@ -65,8 +57,8 @@ public class GmailSteps extends ScenarioSteps {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        String query = "from:"+from+" subject:I am currently out of the office. is:unread";
-        return(getter.listMessagesMatchingQuery(service, userID, query)).size() > 0;
+        String query = "from:" + from + " subject:I am currently out of the office. is:unread";
+        return (getter.listMessagesMatchingQuery(service, userID, query)).size() > 0;
     }
 
 

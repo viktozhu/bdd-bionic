@@ -6,27 +6,29 @@ import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.MessagePartHeader;
 import com.google.gson.GsonBuilder;
 
-import java.io.*;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Properties;
-import javax.mail.MessagingException;
-import javax.mail.Session;
-import javax.mail.internet.*;
-import java.io.IOException;
-import java.nio.file.FileSystems;
-import java.nio.file.Files;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
+import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Session;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.*;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Properties;
 
 public class EmailSender {
     private static final String userMailbox = "me";
     private static Gmail service;
 
     public EmailSender(Gmail service) {
-        this.service = service;
+        EmailSender.service = service;
     }
 
     public Message sendMessage(String emailTo, String json) throws MessagingException {
@@ -46,12 +48,12 @@ public class EmailSender {
     public Message sendReplyTo(Message message, String replayMessage) throws MessagingException, IOException {
         Message fullMessage = new EmailGetter(service).getMessage(service, "me", message.getId());
         List<MessagePartHeader> headersList = fullMessage.getPayload().getHeaders();
-        HashMap <String, String> headersMap = new HashMap<>();
-        for (MessagePartHeader part: headersList) {
+        HashMap<String, String> headersMap = new HashMap<>();
+        for (MessagePartHeader part : headersList) {
             headersMap.put(part.getName(), part.getValue());
         }
         String messageSubject = headersMap.get("Subject");
-        String emailTo = headersMap.get("From");;
+        String emailTo = headersMap.get("From");
         String messageId = headersMap.get("Message-ID");
         String references = headersMap.get("References");
         references = references + " " + messageId;
