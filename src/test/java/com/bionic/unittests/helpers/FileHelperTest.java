@@ -2,7 +2,9 @@ package com.bionic.unittests.helpers;
 
 import com.bionic.helpers.FileHelper;
 import org.junit.Test;
+
 import java.io.File;
+
 import static org.junit.Assert.*;
 
 public class FileHelperTest {
@@ -18,14 +20,14 @@ public class FileHelperTest {
 
     @Test
     public void compareFilesHashSumPositiveTest() {
-        String filePath = "src/test/resources/testData/testGif.gif";
+        String filePath = "src/test/resources/testdata/testGif.gif";
         assertEquals(FileHelper.getFileHashSum(filePath), FileHelper.getFileHashSum(filePath));
     }
 
     @Test
     public void compareFilesHashSumNegativeTest() {
-        String file1 = "src/test/resources/testData/testGif.gif";
-        String file2 = "src/test/resources/testData/testJpg.jpg";
+        String file1 = "src/test/resources/testdata/testGif.gif";
+        String file2 = "src/test/resources/testdata/testJpg.jpg";
         assertNotEquals(FileHelper.getFileHashSum(file1), FileHelper.getFileHashSum(file2));
     }
 
@@ -35,6 +37,6 @@ public class FileHelperTest {
         if (file.exists()) {
             size = file.length() / 1024 / 1024;
         }
-        return  size;
+        return size;
     }
 }

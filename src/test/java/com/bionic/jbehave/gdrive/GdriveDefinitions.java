@@ -4,30 +4,30 @@ import com.bionic.steps.GdriveSteps;
 import net.thucydides.core.annotations.Steps;
 import org.jbehave.core.annotations.*;
 
-/**
- * Created by bdd on 7/30/15.
- */
 public class GdriveDefinitions {
     @Steps
     GdriveSteps steps;
 
-    /** Overwritten by my merge forever :-)  
-    @Given("authorized connection to Gdrive")
-    public void givenAuthorizedConnectionToGdrive2() throws IOException {
-        PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
-
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
-
-        DriveUpload driveUpload = new DriveUpload();
-        driveUpload.insertFile
-                (service,"BDD","test","test","/src/test/resources/testData/testGif.gif");
-    } **/
+    /**
+     * Overwritten by my merge forever :-)
+     *
+     * @Given("authorized connection to Gdrive")
+     * public void givenAuthorizedConnectionToGdrive2() throws IOException {
+     * PropertyLoader.loadProperties();
+     * GmailAuthorization gmailAuthorization = null;
+     * try {
+     * gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
+     * <p/>
+     * } catch (GeneralSecurityException e) {
+     * e.printStackTrace();
+     * }
+     * Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+     * <p/>
+     * DriveUpload driveUpload = new DriveUpload();
+     * driveUpload.insertFile
+     * (service,"BDD","test","test","/src/test/resources/testdata/testGif.gif");
+     * }
+     **/
 
     @Given("authorized connection to Gdrive")
     public void givenAuthorizedConnectionToGdrive() {
@@ -37,7 +37,7 @@ public class GdriveDefinitions {
 
     @When("I upload <filename> to GDrive with <filesize>")
     public void whenIUploadfilenameToGDriveWithfilesize(@Named("filename") String filename,
-                                                        @Named("filesize") String filesize ) {
+                                                        @Named("filesize") String filesize) {
         steps.createTestFile(filename, Integer.valueOf(filesize.substring(0, filesize.indexOf('M'))));
         steps.uploadFile("target\\" + filename);
     }
@@ -81,7 +81,7 @@ public class GdriveDefinitions {
 
     @Then("App notifies me that files are different")
     public void thenAppNotifiesMeThatFilesAreDifferent() {
-      steps.checkAppOutput("NOK");
+        steps.checkAppOutput("NOK");
     }
 
 }

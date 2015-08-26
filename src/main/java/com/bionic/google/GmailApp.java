@@ -17,7 +17,7 @@ public class GmailApp {
     private static String user;
 
     public static void main(String[] args) throws MessagingException, IOException, InterruptedException, GeneralSecurityException {
-        PropertyLoader.loadPropertys();
+        PropertyLoader.loadProperties();
 
         // Unfortunately to be able to work with dofferent user there should be secrets for them,
         // so use only predefined

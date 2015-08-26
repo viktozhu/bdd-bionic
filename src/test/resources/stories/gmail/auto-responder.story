@@ -1,5 +1,4 @@
 Meta:
-@ignore
 @issue BDD-2
 
 
@@ -18,4 +17,4 @@ When an email was sent by logged in user to 'bionic.bdd@gmail.com', with content
                                                                                                "body": "This is my first email",
                                                                                                "footer": "Best regards! "
                                                                                              }'
-Then 'bionic.bdd.test' user get autoreply email in response
+Then 'bionic.bdd.test' user get autoreply email in response from 'bionic.bdd@gmail.com'

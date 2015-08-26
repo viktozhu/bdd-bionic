@@ -10,36 +10,12 @@ import net.thucydides.core.annotations.Step;
 import net.thucydides.core.steps.ScenarioSteps;
 import org.junit.Assert;
 
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.util.List;
 
-/**
- * Created by viktozhu on 7/27/15.
- */
 public class GmailSteps extends ScenarioSteps {
 
-    @Step
-    public void executeAutoResponderOn(String email) {
-        //Execute AutoResponder on accounts.get(email);
-    }
-
-    @Step
-    public boolean shouldReceiveAutoReply(String account, String from) {
-        /* Thread.sleep(7000);
-        String query = "from:"+from+" subject:autoPeply is:unread";
-        EmailGetter emailGetter = new EmailGetter(accounts.get(account));
-        return (emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).size() > 0;
-        //assertThat(emailGetter.listMessagesMatchingQuery(accounts.get(account), "me", query)).isNotEmpty();
-        */
-        return true;
-    }
-
-    private void sendEmailWith(Gmail account, String from, String to, String subject, String text) {
-        /*EmailSender emailSender = new EmailSender(account, from);
-        emailSender.sendMessage(emailSender.createEmail(to, subject, text));
-            */
-    }
 
     @Step
     public Gmail authorize(String applicationName, String pathToClientSecret) {
@@ -50,40 +26,48 @@ public class GmailSteps extends ScenarioSteps {
             Gmail service = googleAuthorization.getGmailService();
             return service;
 
-        } catch (GeneralSecurityException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
-        } catch (IOException e) {
-            Assert.fail("Incorrect SECRET KEY:" +e.toString());
+        } catch (GeneralSecurityException | IOException e) {
+            Assert.fail("Incorrect SECRET KEY:" + e.toString());
         }
 
         return null;
     }
 
     @Step
-    public void sendEmail(Gmail service, String mailTo, Gson json) {
-        EmailSender sender = new EmailSender(service,"");
-        /*try {
-            sender.sendMessage(mailTo, json);
+    public Message sendEmail(Gmail service, String mailTo, String json) {
+        EmailSender sender = new EmailSender(service, "");
+        try
+        {
+            return sender.sendMessage(mailTo, json);
         } catch (MessagingException e) {
             Assert.fail("Message sending error: " + e.toString());
+            return null;
+        }
+    }
+
+    @Step
+    public void executeAutoResponder(Gmail service, Message message, String content) {
+        EmailSender sender = new EmailSender(service, "");
+        try {
+            sender.sendReplyTo(message, content);
+        } catch (MessagingException e) {
+            e.printStackTrace();
         } catch (IOException e) {
-            Assert.fail("Message sending error: " + e.toString());
-        }*/
+            e.printStackTrace();
+        }
     }
 
-    public void executeAutoResponder(Gmail service, String to){
-        EmailSender sender = new EmailSender(service,"");
-       // sender.sendAutoReplyMessage(to);
+    @Step
+    public boolean isAutoReplyReceived(Gmail service, String userID, String from) throws IOException {
+        EmailGetter getter = new EmailGetter(service, userID);
+        try {
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        String query = "from:" + from + " subject:I am currently out of the office. is:unread";
+        return (getter.listMessagesMatchingQuery(query)).size() > 0;
     }
 
-    public boolean isAutoReplyReceived(Gmail service, String from) {
-        EmailGetter receiver = new EmailGetter(service, from);
-        List<Message> receivedMessages = receiver.getUnreadMessages();
-        return receivedMessages.stream().anyMatch(m -> isAutoReply(m));
-    }
 
-    private boolean isAutoReply(Message message){
-        // TODO: implement check logic
-        return true;
-    }
 }

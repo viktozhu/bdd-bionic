@@ -39,22 +39,77 @@ import java.util.Map;
  * Created by viktozhu on 6/2/15.
  */
 public class AdfsAuth {
+    private static final String HOST = "localhost";
+    private static final String HEADER_LOCATION = "Location";
+    private static final String ENC_UTF8 = "UTF-8";
     private static Logger logger = LoggerFactory.getLogger(AdfsAuth.class);
-
     private String URL;
     private String user;
     private String password;
     private String domain;
 
-    private static final String HOST = "localhost";
-    private static final String HEADER_LOCATION = "Location";
-    private static final String ENC_UTF8 = "UTF-8";
-
-    public AdfsAuth(String login, String password, String url, String domain){
+    public AdfsAuth(String login, String password, String url, String domain) {
         this.URL = url;
         this.user = login;
         this.password = password;
         this.domain = domain;
+    }
+
+    /**
+     * @param inputTags
+     * @return
+     * @throws UnsupportedEncodingException
+     */
+    public static String getPostBody(Map<String, String> inputTags, boolean useHtmlDecoding) throws UnsupportedEncodingException {
+
+        String body = "";
+
+        for (Map.Entry<String, String> e : inputTags.entrySet()) {
+
+            String key = e.getKey();
+            if (StringUtil.isBlank(key))
+                continue;
+
+            String val = useHtmlDecoding ? StringEscapeUtils.unescapeHtml4(e.getValue()) : e.getValue();
+
+            body += String.format("%s%s=%s",
+                    StringUtil.isBlank(body) ? "" : "&",
+                    URLEncoder.encode(key, ENC_UTF8),
+                    URLEncoder.encode(val, ENC_UTF8));
+        }
+
+        return body;
+    }
+
+    /**
+     * @param content
+     * @return
+     */
+    public static Map<String, String> getAllInputsTags(String content) {
+        Map<String, String> map = new HashMap<String, String>();
+
+        Document doc = Jsoup.parse(content);
+        Elements inputs = doc.select("input,select");
+
+        for (Element input : inputs) {
+            String name = input.attributes().get("name");
+            String value = input.attributes().get("value");
+
+            map.put(name, value);
+        }
+
+        return map;
+    }
+
+    /**
+     * @param content
+     * @return
+     */
+    public static String getFormAction(String content) {
+        Document doc = Jsoup.parse(content);
+        Element input = doc.select("form").first();
+
+        return input.attributes().get("action");
     }
 
     public void getCookies() throws IOException, KeyManagementException, NoSuchAlgorithmException {
@@ -63,7 +118,7 @@ public class AdfsAuth {
          */
         logger.debug("Connecting to server " + URL);
         HttpParams params = new BasicHttpParams();
-        params.setParameter("http.protocol.handle-redirects",false);
+        params.setParameter("http.protocol.handle-redirects", false);
 
         /**
          *  Configure context with cookies
@@ -94,11 +149,10 @@ public class AdfsAuth {
         CloseableHttpResponse response = client.execute(loadDashboardRequest, cookiesContext);
 
         String url = "";
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY)
-        {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
             // request qauth.qm...
             url = response.getHeaders(HEADER_LOCATION)[0].getValue();
-            logger.debug("Connection redirected to "+ url);
+            logger.debug("Connection redirected to " + url);
         }
 
         /**
@@ -112,13 +166,12 @@ public class AdfsAuth {
          * Select qauth.deloitte.com provider for login
          */
         url = String.format("%s://%s%s", loadAuthPageRequest.getURI().getScheme(), loadAuthPageRequest.getURI().getHost(), getFormAction(content));
-        HttpPost selectAuthProviderRequest  = new HttpPost(url);
+        HttpPost selectAuthProviderRequest = new HttpPost(url);
         selectAuthProviderRequest.setEntity(new StringEntity(getPostBody(getAllInputsTags(content), false), ContentType.APPLICATION_FORM_URLENCODED));
         logger.debug("Requesting for ADFS server for login + " + url);
 
         response = client.execute(selectAuthProviderRequest);
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY)
-        {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
             // get redirect url
             url = String.format("%s://%s%s",
                     selectAuthProviderRequest.getURI().getScheme(),
@@ -140,8 +193,7 @@ public class AdfsAuth {
         getFedAuthRequest.setEntity(new StringEntity(getPostBody(getAllInputsTags(content), true), ContentType.APPLICATION_FORM_URLENCODED));
 
         response = client.execute(getFedAuthRequest, cookiesContext);
-        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY)
-        {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_MOVED_TEMPORARILY) {
             logger.debug("FedAuth cookie granted " + cookiesContext);
             String BLUE_STRIPE_PVN = cookiesContext.getCookieStore().getCookies().get(0).getValue();
             String FED_AUTH = cookiesContext.getCookieStore().getCookies().get(1).getValue();
@@ -155,67 +207,5 @@ public class AdfsAuth {
         }
 
         client.close();
-    }
-
-    /**
-     *
-     * @param inputTags
-     * @return
-     * @throws UnsupportedEncodingException
-     */
-    public static String getPostBody( Map<String, String> inputTags, boolean useHtmlDecoding) throws UnsupportedEncodingException {
-
-        String body = "";
-
-        for (Map.Entry<String, String> e : inputTags.entrySet()) {
-
-            String key = e.getKey();
-            if (StringUtil.isBlank(key))
-                continue;
-
-            String val = useHtmlDecoding ?  StringEscapeUtils.unescapeHtml4(e.getValue()) : e.getValue();
-
-            body += String.format("%s%s=%s",
-                    StringUtil.isBlank(body) ? "" : "&",
-                    URLEncoder.encode(key, ENC_UTF8),
-                    URLEncoder.encode(val, ENC_UTF8));
-        }
-
-        return body;
-    }
-
-    /**
-     *
-     * @param content
-     * @return
-     */
-    public static Map<String, String> getAllInputsTags(String content) {
-        Map<String, String> map = new HashMap<String, String>();
-
-        Document doc = Jsoup.parse(content);
-        Elements inputs = doc.select("input,select");
-
-        for (Element input : inputs)
-        {
-            String name = input.attributes().get("name");
-            String value = input.attributes().get("value");
-
-            map.put(name, value);
-        }
-
-        return map;
-    }
-
-    /**
-     *
-     * @param content
-     * @return
-     */
-    public static String getFormAction(String content)
-    {
-        Document doc = Jsoup.parse(content);
-        Element input = doc.select("form").first();
-
-        return input.attributes().get("action");
     }
 }
