@@ -8,7 +8,6 @@ import com.google.api.services.drive.model.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.time.Instant;
 
 /**
  * Created by 1 on 05.08.2015.
@@ -31,17 +30,17 @@ public class GdriveApp {
     public static void main(String[] args) throws IOException {
 
         PropertyLoader.loadPropertys();
-        GmailAuthorization gmailAuthorization = null;
+        GoogleAuthorization googleAuthorization = null;
         try {
             String secretPath = DriveUpload.getFilePath("/src/main/resources/secrets/bionic.bdd.secret.json");
-            gmailAuthorization =
-                    new GmailAuthorization("bdd-project", secretPath);
+            googleAuthorization =
+                    new GoogleAuthorization("bdd-project", secretPath);
 
         } catch (GeneralSecurityException e) {
             e.printStackTrace();
             System.exit(1);
         }
-        Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+        Drive service = googleAuthorization.getDriveService("bionic.bdd@gmail.com");
         String filePathParts [] = args[1].split("/");
 
         if (args[0].equals("-upload")) {

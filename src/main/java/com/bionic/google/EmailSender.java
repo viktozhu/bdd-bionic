@@ -22,11 +22,12 @@ import javax.activation.FileDataSource;
 import javax.mail.Multipart;
 
 public class EmailSender {
-    private static final String userMailbox = "me";
+    private static String userId;
     private static Gmail service;
 
-    public EmailSender(Gmail service) {
+    public EmailSender(Gmail service, String user) {
         this.service = service;
+        this.userId = user;
     }
 
     public Message sendMessage(String emailTo, String json) throws MessagingException {
@@ -44,7 +45,7 @@ public class EmailSender {
     }
 
     public Message sendReplyTo(Message message, String replayMessage) throws MessagingException, IOException {
-        Message fullMessage = new EmailGetter(service).getMessage(service, "me", message.getId());
+        Message fullMessage = new EmailGetter(service,userId).getMessage(message.getId());
         List<MessagePartHeader> headersList = fullMessage.getPayload().getHeaders();
         HashMap <String, String> headersMap = new HashMap<>();
         for (MessagePartHeader part: headersList) {
@@ -83,7 +84,7 @@ public class EmailSender {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage email = new MimeMessage(session);
-        email.setFrom(new InternetAddress(userMailbox));
+        email.setFrom(new InternetAddress(userId));
         email.addRecipient(javax.mail.Message.RecipientType.TO,
                 new InternetAddress(emailTo));
         EmailContent emailContainerContent = new GsonBuilder().create().fromJson(json, EmailContent.class);
@@ -106,7 +107,7 @@ public class EmailSender {
         Properties props = new Properties();
         Session session = Session.getDefaultInstance(props, null);
         MimeMessage email = new MimeMessage(session);
-        email.setFrom(new InternetAddress(userMailbox));
+        email.setFrom(new InternetAddress(userId));
         email.addRecipient(javax.mail.Message.RecipientType.TO,
                 new InternetAddress(emailTo));
         email.setSubject(messageSubject);
@@ -124,7 +125,7 @@ public class EmailSender {
     private Message sendMimeMessage(MimeMessage email) throws MessagingException {
         Message message = convertMimeMessageToMessage(email);
         try {
-            message = service.users().messages().send(userMailbox, message).execute();
+            message = service.users().messages().send(userId, message).execute();
         } catch (IOException e) {
             throw new MessagingException("Cannot send message", e);
         }
@@ -135,7 +136,7 @@ public class EmailSender {
         Message message = convertMimeMessageToMessage(email);
         message.setThreadId(threadId);
         try {
-            message = service.users().messages().send(userMailbox, message).execute();
+            message = service.users().messages().send(userId, message).execute();
         } catch (IOException e) {
             throw new MessagingException("Cannot send message", e);
         }

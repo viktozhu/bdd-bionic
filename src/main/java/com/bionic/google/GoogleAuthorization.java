@@ -29,7 +29,7 @@ import static com.bionic.utils.PropertyLoader.getProperty;
 /**
  * Created by viktozhu on 7/23/15.
  */
-public class GmailAuthorization {
+public class GoogleAuthorization {
 
     private String applicationName;
     private java.io.File dataStoreDir;
@@ -40,7 +40,7 @@ public class GmailAuthorization {
     private static final List<String> GMAIL_SCOPES = Arrays.asList(GmailScopes.MAIL_GOOGLE_COM);
     private static final List<String> DRIVE_SCOPES = Arrays.asList(DriveScopes.DRIVE);
 
-    public GmailAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
+    public GoogleAuthorization(String applicationName, String pathToClientSecret) throws IOException, GeneralSecurityException {
         this.applicationName = applicationName;
         this.dataStoreDir = new java.io.File(getProperty("project.path"), "src/main/resources/credentials/gmail-api" + applicationName);
         this.dataStoreFactory = new FileDataStoreFactory(dataStoreDir);
@@ -54,7 +54,7 @@ public class GmailAuthorization {
      * @return an authorized Credential object.
      * @throws IOException
      */
-    public Credential authorizeGmail() throws IOException {
+    private Credential authorizeGmail() throws IOException {
         InputStream in = new FileInputStream(pathToClientSecret);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 
@@ -72,7 +72,7 @@ public class GmailAuthorization {
     }
 
 
-    public Credential authorizeDrive(String user) throws IOException {
+    private Credential authorizeDrive(String user) throws IOException {
         InputStream in = new FileInputStream(pathToClientSecret);
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 

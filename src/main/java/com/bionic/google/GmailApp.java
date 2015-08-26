@@ -1,8 +1,6 @@
 package com.bionic.google;
 
-import com.bionic.google.EmailSender;
-import com.bionic.google.GmailAuthorization;
-import com.bionic.google.EmailGetter;
+import com.bionic.utils.PropertyLoader;
 import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.Message;
 
@@ -13,31 +11,27 @@ import java.util.HashSet;
 import java.util.List;
 
 public class GmailApp {
-    public static final int THREE_MINUTES_IN_MILLISECONDS = 3*60*1000;
+    private static final int THREE_MINUTES_IN_MILLISECONDS = 3*60*1000;
+    private static GoogleAuthorization googleAuthorization;
+    private static Gmail gmail;
+    private static String user;
 
-    public static void main(String[] args) throws MessagingException, IOException, InterruptedException {
-        GmailAuthorization gmailAuthorization = null;
-        try {
-            gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/bionic.bdd.secret.json");
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        }
-        Gmail gmail = null;
-        try {
-            gmail = gmailAuthorization.getGmailService();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public static void main(String[] args) throws MessagingException, IOException, InterruptedException, GeneralSecurityException {
+        PropertyLoader.loadPropertys();
 
-        EmailGetter emailGetter = new EmailGetter(gmail);
+        // Unfortunately to be able to work with dofferent user there should be secrets for them,
+        // so use only predefined
+        user = PropertyLoader.getProperty("email.bionic.bdd");
+        googleAuthorization = new GoogleAuthorization(PropertyLoader.getProperty("project.bionic.bdd"), PropertyLoader.getProperty("secret.path.bionic.bdd"));
+        gmail = googleAuthorization.getGmailService();
+
+        EmailGetter emailGetter = new EmailGetter(gmail,user);
         Long internalDateOfLast;
         Message lastMessage = emailGetter.lastMessage();
         if( lastMessage == null) {
             internalDateOfLast = 0L;
         } else {
-            internalDateOfLast = emailGetter.getMessage(gmail,"bionic.bdd@gmail.com", lastMessage.getId()).getInternalDate();
+            internalDateOfLast = emailGetter.getMessage(lastMessage.getId()).getInternalDate();
         }
 
         HashSet<String> handledThreadId = new HashSet<>();
@@ -46,10 +40,10 @@ public class GmailApp {
         while (System.currentTimeMillis() < tEnd) {
             Thread.sleep(1000);
             System.out.println(System.currentTimeMillis());
-            EmailSender emailSender = new EmailSender(gmail);
+            EmailSender emailSender = new EmailSender(gmail, user);
             List<Message> unreadMessages = emailGetter.getUnreadMessages();
             for (Message message : unreadMessages) {
-                Message fullMessage = emailGetter.getMessage(gmail,"bionic.bdd@gmail.com", message.getId());
+                Message fullMessage = emailGetter.getMessage(message.getId());
                 if (internalDateOfLast < fullMessage.getInternalDate() && !handledThreadId.contains(message.getThreadId())) {
                     Message replayMessage = emailSender.sendReplyTo(fullMessage, "Sorry, but I am currently out of the office.");
                     handledThreadId.add(replayMessage.getThreadId());

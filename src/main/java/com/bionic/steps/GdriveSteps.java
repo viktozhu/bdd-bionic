@@ -2,7 +2,7 @@ package com.bionic.steps;
 
 import com.bionic.google.DriveDownload;
 import com.bionic.google.DriveUpload;
-import com.bionic.google.GmailAuthorization;
+import com.bionic.google.GoogleAuthorization;
 import com.bionic.helpers.FileHelper;
 import com.bionic.helpers.RunHelper;
 import com.google.api.services.drive.Drive;
@@ -31,14 +31,14 @@ public class GdriveSteps extends ScenarioSteps{
 
     @Step
     public void authorizeToGdrive() {
-        GmailAuthorization gmailAuthorization = null;
+        GoogleAuthorization googleAuthorization = null;
         try {
-            gmailAuthorization = new GmailAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.secret.json");
+            googleAuthorization = new GoogleAuthorization("bdd-project","src/main/resources/secrets/bionic.bdd.secret.json");
         } catch (IOException | GeneralSecurityException e) {
             e.printStackTrace();
         }
         try {
-            drive = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
+            drive = googleAuthorization.getDriveService("bionic.bdd@gmail.com");
         } catch (IOException e) {
             e.printStackTrace();
         }

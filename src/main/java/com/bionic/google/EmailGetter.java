@@ -11,37 +11,30 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class EmailGetter {
-    private static final String USER_ID = "me";
+
     private static final String UNREAD_EMAIL_QUERY = "is: unread";
     private static final String INBOX_EMAIL_QUERY = "in: inbox";
     private Gmail service;
+    private String userId;
 
-    public EmailGetter(Gmail service) {
+    public EmailGetter(Gmail service, String user) {
         this.service = service;
+        this.userId = user;
     }
 
     /**
      * Get Message with given ID.
      *
-     * @param service   Authorized Gmail API instance.
-     * @param userId    User's email address. The special value "me"
-     *                  can be used to indicate the authenticated user.
      * @param messageId ID of Message to retrieve.
      * @return Message Retrieved Message.
      * @throws IOException
      */
-    public Message getMessage(Gmail service, String userId, String messageId)
-            throws IOException {
-        Message message = service.users().messages().get(userId, messageId).execute();
-
-        //Getting a snippet just for the testing purpose
-        //System.out.println("Message snippet: " + message.getSnippet());
-
-        return message;
+    public Message getMessage(String messageId) throws IOException {
+        return service.users().messages().get(userId, messageId).execute();
     }
 
     public Message lastMessage() throws IOException {
-        ListMessagesResponse response = service.users().messages().list("me").setMaxResults(1L).execute();
+        ListMessagesResponse response = service.users().messages().list(userId).setMaxResults(1L).execute();
         List<Message> messages = response.getMessages();
         if (messages == null || messages.isEmpty()) {
             return null;
@@ -52,14 +45,10 @@ public class EmailGetter {
     /**
      * List all Messages of the user's mailbox matching the query.
      *
-     * @param service Authorized Gmail API instance.
-     * @param userId  User's email address. The special value "me"
-     *                can be used to indicate the authenticated user.
      * @param query   String used to filter the Messages listed.
      * @throws IOException
      */
-    public List<Message> listMessagesMatchingQuery(Gmail service, String userId,
-                                                   String query) throws IOException {
+    public List<Message> listMessagesMatchingQuery(String query) throws IOException {
         ListMessagesResponse response = service.users().messages().list(userId).setQ(query).execute();
 
         List<Message> messages = new ArrayList<>();
@@ -114,7 +103,7 @@ public class EmailGetter {
     public List<Message> getUnreadMessages() {
         String unreadInInboxEmailQuery = UNREAD_EMAIL_QUERY + " + " + INBOX_EMAIL_QUERY;
         try {
-            return listMessagesMatchingQuery(service, USER_ID, unreadInInboxEmailQuery);
+            return listMessagesMatchingQuery(unreadInInboxEmailQuery);
         } catch (IOException e) {
             e.printStackTrace();
         }
