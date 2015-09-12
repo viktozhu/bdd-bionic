@@ -1,5 +1,6 @@
 package com.bionic.helpers;
 
+import com.bionic.google.DriveUpload;
 import org.apache.commons.lang3.ArrayUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,17 +16,22 @@ import java.io.InputStreamReader;
 public class RunHelper {
     private static Logger logger = LoggerFactory.getLogger(FileHelper.class);
 
-    public static String runJar(String path, String parameters) {
-        String[] cmdArr = {"java", "-jar", path};
-        String[] paramsArr = parameters.split(" ");
-        ProcessBuilder pb = new ProcessBuilder(ArrayUtils.addAll(cmdArr, paramsArr));
-        Process process = null;
+    public static String runJar(String jarPath, String command,String filePath) {
+        String[] cmdArr = {"java", "-jar", DriveUpload.getFilePath(jarPath),command};
+        String[] filePaths = filePath.split(" ");
+        String [] fullFilePaths=new String[filePaths.length];
+
+        for(int i=0; i<filePaths.length;i++){
+            fullFilePaths[i]=DriveUpload.getFilePath(filePaths[i]);
+        }
+        ProcessBuilder pb = new ProcessBuilder(ArrayUtils.addAll(cmdArr, fullFilePaths));
+        Process process;
         try {
             process = pb.start();
-            int returnCode = process.waitFor();
+            process.waitFor();
             return output(process.getInputStream());
         } catch (IOException | InterruptedException e) {
-            logger.error("Error while running Jar " + path, e);
+            logger.error("Error while running Jar " + jarPath, e);
         }
         return "";
     }

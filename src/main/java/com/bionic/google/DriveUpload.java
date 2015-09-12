@@ -15,10 +15,22 @@ import java.util.Arrays;
 public class DriveUpload {
 
     public static String getFilePath(String fileAddr) {
-        fileAddr = PropertyLoader.loadProperty("project.path") + "\\" + fileAddr;
-        java.io.File file = new java.io.File(fileAddr);
-        String absolutePath = file.getAbsolutePath();
-        return absolutePath;
+        String [] props ={PropertyLoader.loadProperty("project.path")+ "/" + fileAddr,
+                System.getProperty("user.dir")+ "/" + fileAddr};
+        java.io.File file;
+
+        for(int i = 0; i<props.length;i++){
+            file = new java.io.File(props[i]);
+            if(file.exists()){
+                String absolutePath = file.getAbsolutePath();
+                return absolutePath;
+            }
+            else if(new java.io.File(fileAddr).exists()){
+                String absolutePath = new java.io.File(fileAddr).getAbsolutePath();
+                return absolutePath;
+            }
+        }
+        return "NOK";
     }
 
     public static String getMimeType(String filePath) {

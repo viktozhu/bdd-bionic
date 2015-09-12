@@ -1,5 +1,5 @@
 Meta:
-@ignore
+@issue BDD-2
 
 Narrative:
 As a user

@@ -73,9 +73,9 @@ public class GdriveDefinitions {
         //Nothing to do
     }
 
-    @When("I run application with parameters '$parameters'")
-    public void whenIRunApplicationWithParameters(String parameters) {
-        steps.runApplication(parameters);
+    @When("I run application with parameters '$command' '$files'")
+    public void whenIRunApplicationWithParameters(String command, String files) {
+        steps.runApplication(command,files);
     }
 
 

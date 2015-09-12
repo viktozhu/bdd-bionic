@@ -89,8 +89,8 @@ public class GoogleAuthorization {
         Credential credential = new AuthorizationCodeInstalledApp(
                 flow, new LocalServerReceiver()).authorize(user);
 
-        System.out.println(
-                "Credentials saved to " + dataStoreDir.getAbsolutePath());
+//        System.out.println(
+//                "Credentials saved to " + dataStoreDir.getAbsolutePath());
         return credential;
     }
 

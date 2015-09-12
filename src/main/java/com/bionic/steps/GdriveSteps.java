@@ -95,14 +95,13 @@ public class GdriveSteps extends ScenarioSteps {
     }
 
     @Step
-    public void runApplication(String parameters) {
-        String output = RunHelper.runJar("src\\test\\resources\\App.jar", parameters);
+    public void runApplication(String command, String file) {
+        String output = RunHelper.runJar("/src/test/resources/bdd-bionic-gdriveApp.jar",command,file);
         Serenity.getCurrentSession().put("appOutput", output);
     }
 
     public void checkAppOutput(String expected) {
         String output = (String) Serenity.getCurrentSession().get("appOutput");
-        //Assert.assertTrue("Return code is not " + expectedCode, returnCode == expectedCode);
         assertThat(output, containsString(expected));
     }
 }
