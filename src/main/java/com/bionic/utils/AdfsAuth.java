@@ -35,9 +35,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by viktozhu on 6/2/15.
- */
 public class AdfsAuth {
     private static final String HOST = "localhost";
     private static final String HEADER_LOCATION = "Location";

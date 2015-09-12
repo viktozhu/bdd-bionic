@@ -10,9 +10,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-/**
- * Created by Illya on 04.08.2015.
- */
 public class RunHelper {
     private static Logger logger = LoggerFactory.getLogger(FileHelper.class);
 

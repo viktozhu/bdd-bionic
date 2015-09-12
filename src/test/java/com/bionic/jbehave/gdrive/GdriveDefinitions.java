@@ -8,27 +8,6 @@ public class GdriveDefinitions {
     @Steps
     GdriveSteps steps;
 
-    /**
-     * Overwritten by my merge forever :-)
-     *
-     * @Given("authorized connection to Gdrive")
-     * public void givenAuthorizedConnectionToGdrive2() throws IOException {
-     * PropertyLoader.loadProperties();
-     * GmailAuthorization gmailAuthorization = null;
-     * try {
-     * gmailAuthorization = new GmailAuthorization("bdd-project", "src/main/resources/secrets/client_secret_drive.json");
-     * <p/>
-     * } catch (GeneralSecurityException e) {
-     * e.printStackTrace();
-     * }
-     * Drive service = gmailAuthorization.getDriveService("bionic.bdd@gmail.com");
-     * <p/>
-     * DriveUpload driveUpload = new DriveUpload();
-     * driveUpload.insertFile
-     * (service,"BDD","test","test","/src/test/resources/testdata/testGif.gif");
-     * }
-     **/
-
     @Given("authorized connection to Gdrive")
     public void givenAuthorizedConnectionToGdrive() {
         steps.authorizeToGdrive();
